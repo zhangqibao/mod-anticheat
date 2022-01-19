@@ -37,9 +37,6 @@ void AnticheatData::SetLastOpcode(uint32 opcode)
 void AnticheatData::SetPosition(float x, float y, float z, float o)
 {
     lastMovementInfo.pos = { x, y, z, o };
-
-
-
 }
 
 uint32 AnticheatData::GetLastOpcode() const
