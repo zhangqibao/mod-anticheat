@@ -129,11 +129,11 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
                 " has been kicked.|r";
             sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
         }
-    } 
-	else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false)) 
-	{
-		LOG_INFO("module", "AnticheatMgr:: Fly-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
-	}
+    }
+    else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false)) 
+    {
+        LOG_INFO("module", "AnticheatMgr:: Fly-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
+    }
 
     BuildReport(player,FLY_HACK_REPORT);
 }
