@@ -58,14 +58,14 @@ public:
 			LOG_INFO("module", "Anticheat: Resetting daily report states.");
 			sAnticheatMgr->ResetDailyReportStates();
 			UpdateReportResetTime();
-            FMT_LOG_INFO("module", "Anticheat: Next daily report reset: {}", Acore::Time::TimeToHumanReadable(resetTime));
+            LOG_INFO("module", "Anticheat: Next daily report reset: {}", Acore::Time::TimeToHumanReadable(resetTime));
 		}
 
         if (GameTime::GetUptime() > lastIterationPlayer)
 		{
 			lastIterationPlayer = GameTime::GetUptime() + Seconds(sConfigMgr->GetOption<uint32>("Anticheat.SaveReportsTime", 60));
 
-            FMT_LOG_INFO("module", "Saving reports for {} players.", sWorld->GetPlayerCount());
+            LOG_INFO("module", "Saving reports for {} players.", sWorld->GetPlayerCount());
 
 			for (SessionMap::const_iterator itr = sWorld->GetAllSessions().begin(); itr != sWorld->GetAllSessions().end(); ++itr)
 				if (Player* plr = itr->second->GetPlayer())
