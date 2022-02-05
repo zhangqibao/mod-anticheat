@@ -417,9 +417,9 @@ void AnticheatMgr::AnticheatGlobalCommand(ChatHandler* handler)
 		{
 			Field *fieldsDB = resultDB->Fetch();
 
-            ObjectGuid guid = ObjectGuid::Create<HighGuid::Player>(fieldsDB[0].GetUInt32());
-			float average = fieldsDB[1].GetFloat();
-			uint32 total_reports = fieldsDB[2].GetUInt32();
+            ObjectGuid guid = ObjectGuid::Create<HighGuid::Player>(fieldsDB[0].Get<uint32>());
+			float average = fieldsDB[1].Get<float>();
+			uint32 total_reports = fieldsDB[2].Get<uint32>();
 
 			if (Player* player = ObjectAccessor::FindConnectedPlayer(guid))
 				handler->PSendSysMessage("Player: %s Average: %f Total Reports: %u", player->GetName().c_str(), average, total_reports);
@@ -443,9 +443,9 @@ void AnticheatMgr::AnticheatGlobalCommand(ChatHandler* handler)
 		{
 			Field *fieldsDB = resultDB->Fetch();
 
-            ObjectGuid guid = ObjectGuid::Create<HighGuid::Player>(fieldsDB[0].GetUInt32());
-			float average = fieldsDB[1].GetFloat();
-			uint32 total_reports = fieldsDB[2].GetUInt32();
+            ObjectGuid guid = ObjectGuid::Create<HighGuid::Player>(fieldsDB[0].Get<uint32>());
+			float average = fieldsDB[1].Get<float>();
+			uint32 total_reports = fieldsDB[2].Get<uint32>();
 
 			if (Player* player = ObjectAccessor::FindConnectedPlayer(guid))
 				handler->PSendSysMessage("Player: %s Total Reports: %u Average: %f", player->GetName().c_str(), total_reports, average);
