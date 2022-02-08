@@ -18,7 +18,7 @@
 #include "Player.h"
 #include "Configuration/Config.h"
 
-#define CLIMB_ANGLE 1.9f
+#define CLIMB_ANGLE 1.87f
 
 AnticheatMgr::AnticheatMgr()
 {
