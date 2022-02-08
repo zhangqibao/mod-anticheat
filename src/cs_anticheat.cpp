@@ -91,7 +91,7 @@ public:
 
     static bool HandleAnticheatJailCommand(ChatHandler* handler, const char* args)
     {
-		if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
+        if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
             return false;
 
         Player* pTarget = NULL;
@@ -169,7 +169,7 @@ public:
 
     static bool HandleAntiCheatPlayerCommand(ChatHandler* handler, const char* args)
     {
-		if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
+        if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
             return false;
 
         std::string strCommand;
@@ -221,7 +221,7 @@ public:
 
     static bool HandleAntiCheatGlobalCommand(ChatHandler* handler, const char* /* args */)
     {
-		if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
+        if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
         {
             handler->PSendSysMessage("The Anticheat System is disabled.");
             return true;

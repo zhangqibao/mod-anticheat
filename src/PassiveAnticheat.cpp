@@ -20,6 +20,6 @@ void AddSC_anticheat_commandscript();
 
 void Addmod_anticheatScripts()
 {
-	startAnticheatScripts();
-	AddSC_anticheat_commandscript();
+    startAnticheatScripts();
+    AddSC_anticheat_commandscript();
 }

@@ -30,58 +30,58 @@ Seconds lastIterationPlayer = GameTime::GetUptime() + 30s; //TODO: change 30 sec
 class AnticheatPlayerScript : public PlayerScript
 {
 public:
-	AnticheatPlayerScript() : PlayerScript("AnticheatPlayerScript") { }
+    AnticheatPlayerScript() : PlayerScript("AnticheatPlayerScript") { }
 
-	void OnLogout(Player* player) override
-	{
-		sAnticheatMgr->HandlePlayerLogout(player);
-	}
+    void OnLogout(Player* player) override
+    {
+        sAnticheatMgr->HandlePlayerLogout(player);
+    }
 
-	void OnLogin(Player* player) override
-	{
-		sAnticheatMgr->HandlePlayerLogin(player);
+    void OnLogin(Player* player) override
+    {
+        sAnticheatMgr->HandlePlayerLogin(player);
 
         if (sConfigMgr->GetOption<bool>("Anticheat.LoginMessage", true))
-			ChatHandler(player->GetSession()).PSendSysMessage("This server is running an Anticheat Module.");
-	}
+            ChatHandler(player->GetSession()).PSendSysMessage("This server is running an Anticheat Module.");
+    }
 };
 
 class AnticheatWorldScript : public WorldScript
 {
 public:
-	AnticheatWorldScript() : WorldScript("AnticheatWorldScript") { }
+    AnticheatWorldScript() : WorldScript("AnticheatWorldScript") { }
 
     void OnUpdate(uint32 /* diff */) override // unusued parameter
-	{
-		if (GameTime::GetGameTime() > resetTime)
-		{
-			LOG_INFO("module", "Anticheat: Resetting daily report states.");
-			sAnticheatMgr->ResetDailyReportStates();
-			UpdateReportResetTime();
+    {
+        if (GameTime::GetGameTime() > resetTime)
+        {
+            LOG_INFO("module", "Anticheat: Resetting daily report states.");
+            sAnticheatMgr->ResetDailyReportStates();
+            UpdateReportResetTime();
             LOG_INFO("module", "Anticheat: Next daily report reset: {}", Acore::Time::TimeToHumanReadable(resetTime));
-		}
+        }
 
         if (GameTime::GetUptime() > lastIterationPlayer)
-		{
-			lastIterationPlayer = GameTime::GetUptime() + Seconds(sConfigMgr->GetOption<uint32>("Anticheat.SaveReportsTime", 60));
+        {
+            lastIterationPlayer = GameTime::GetUptime() + Seconds(sConfigMgr->GetOption<uint32>("Anticheat.SaveReportsTime", 60));
 
             LOG_INFO("module", "Saving reports for {} players.", sWorld->GetPlayerCount());
 
-			for (SessionMap::const_iterator itr = sWorld->GetAllSessions().begin(); itr != sWorld->GetAllSessions().end(); ++itr)
-				if (Player* plr = itr->second->GetPlayer())
-					sAnticheatMgr->SavePlayerData(plr);
-		}
-	}
+            for (SessionMap::const_iterator itr = sWorld->GetAllSessions().begin(); itr != sWorld->GetAllSessions().end(); ++itr)
+                if (Player* plr = itr->second->GetPlayer())
+                    sAnticheatMgr->SavePlayerData(plr);
+        }
+    }
 
     void OnAfterConfigLoad(bool /* reload */) override // unusued parameter
-	{
+    {
         LOG_INFO("module", "AnticheatModule Loaded.");
-	}
+    }
 
     void UpdateReportResetTime()
-	{
-		resetTime = Seconds(Acore::Time::GetNextTimeWithDayAndHour(-1, 6));
-	}
+    {
+        resetTime = Seconds(Acore::Time::GetNextTimeWithDayAndHour(-1, 6));
+    }
 };
 
 class AnticheatMovementHandlerScript : public MovementHandlerScript
@@ -91,14 +91,14 @@ public:
 
     void OnPlayerMove(Player* player, MovementInfo mi, uint32 opcode) override
     {
-		if (!AccountMgr::IsGMAccount(player->GetSession()->GetSecurity()) || sConfigMgr->GetOption<bool>("Anticheat.EnabledOnGmAccounts", false))
-			sAnticheatMgr->StartHackDetection(player, mi, opcode);
+        if (!AccountMgr::IsGMAccount(player->GetSession()->GetSecurity()) || sConfigMgr->GetOption<bool>("Anticheat.EnabledOnGmAccounts", false))
+            sAnticheatMgr->StartHackDetection(player, mi, opcode);
     }
 };
 
 void startAnticheatScripts()
 {
-	new AnticheatWorldScript();
-	new AnticheatPlayerScript();
-	new AnticheatMovementHandlerScript();
+    new AnticheatWorldScript();
+    new AnticheatPlayerScript();
+    new AnticheatMovementHandlerScript();
 }
