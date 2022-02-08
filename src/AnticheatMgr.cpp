@@ -57,10 +57,10 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
     if (!player->IsAlive())
         return;
 
-        // Prevents the False Positive for water walking when you ressurrect.
-        // Aura 15007 (Resurrectino sickness) is given while dead before returning back to life.
-        if (!player->IsAlive() && player->HasAura(15007))
-                return;
+    // Prevents the False Positive for water walking when you ressurrect.
+    // Aura 15007 (Resurrectino sickness) is given while dead before returning back to life.
+    if (!player->IsAlive() && player->HasAura(15007))
+        return;
 
     if (player->HasAuraType(SPELL_AURA_FEATHER_FALL) ||
         player->HasAuraType(SPELL_AURA_SAFE_FALL) ||
@@ -285,7 +285,6 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
         BuildReport(player, SPEED_HACK_REPORT);
     }
 }
-
 
 void AnticheatMgr::HandlePlayerLogin(Player* player)
 {
