@@ -48,24 +48,31 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectWaterWalkHack", true))
         return;
 
-    ObjectGuid key = player->GetGUID();
-    /* Thanks to @LilleCarl */
-    if (!m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_WATERWALKING) && !movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING))
-        return;
-
-    // if we are a ghost we can walk on water
-    if (!player->IsAlive())
+    // ghost can water walk
+    if (player->HasAuraType(SPELL_AURA_GHOST))
         return;
 
     // Prevents the False Positive for water walking when you ressurrect.
-    // Aura 15007 (Resurrectino sickness) is given while dead before returning back to life.
-    if (!player->IsAlive() && player->HasAura(15007))
+    // Aura 15007 (Resurrection sickness) is given while dead before returning back to life.
+    if (player->HasAuraType(SPELL_AURA_GHOST) && player->HasAura(15007))
         return;
 
-    if (player->HasAuraType(SPELL_AURA_FEATHER_FALL) ||
-        player->HasAuraType(SPELL_AURA_SAFE_FALL) ||
-        player->HasAuraType(SPELL_AURA_WATER_WALK))
+    ObjectGuid key = player->GetGUID();
+    /* Thanks to @LilleCarl */
+    if (m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_WATERWALKING) && movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING))
+    {
+        if (player->HasAuraType(SPELL_AURA_WATER_WALK) || player->HasAuraType(SPELL_AURA_FEATHER_FALL) ||
+            player->HasAuraType(SPELL_AURA_SAFE_FALL))
+        {
+            return;
+        }
+
+    }
+    else if (!m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_WATERWALKING) && !movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING))
+    {
         return;
+    }
+
     if (sConfigMgr->GetOption<bool>("Anticheat.KickPlayerWaterWalkHack", false))
     {
         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
@@ -84,11 +91,11 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
             sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
         }
     }
-    else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false)) {
+    else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+    {
         LOG_INFO("module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
     }
     BuildReport(player, WALK_WATER_HACK_REPORT);
-
 }
 
 void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
