@@ -4,6 +4,10 @@
 
 This is a port of the PassiveAnticheat Script from lordpsyan's repo to [AzerothCore](http://www.azerothcore.org)
 
+## Notice
+
+Requires revision [c50f7feda](https://github.com/azerothcore/azerothcore-wotlk/commit/c50f7feda0ee360f7bcca7f004bf6fb22abde533) or newer.
+
 ## How to install
 
 ### 1) Simply place the module under the `modules` folder of your AzerothCore source folder.

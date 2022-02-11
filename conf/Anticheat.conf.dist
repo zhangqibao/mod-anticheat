@@ -61,6 +61,7 @@ Anticheat.DetectJumpHack = 1
 Anticheat.DetectTelePlaneHack = 1
 Anticheat.DetectSpeedHack = 1
 Anticheat.DetectClimbHack = 0
+Anticheat.DetectTelePortHack =1
 
 #     Anticheat.StricterFlyHackCheck
 #       Description: Checks moveflag ascending (may give false positives)
