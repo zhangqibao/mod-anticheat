@@ -212,7 +212,9 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
             data << str;
             sWorld->SendGlobalGMMessage(&data);
         }
-        LOG_INFO("module", "AnticheatMgr:: Teleport-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+            LOG_INFO("module", "AnticheatMgr:: Teleport-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
+
         BuildReport(player, TELEPORT_HACK_REPORT);
     }
     else if (player->CanTeleport())
