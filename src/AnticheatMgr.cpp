@@ -201,7 +201,7 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
     float xDiff = fabs(lastX - newX);
     float yDiff = fabs(lastY - newY);
 
-    if ((xDiff >= 50.0f || yDiff >= 50.0f) && !player->CanTeleport())
+    if ((xDiff >= 50.0f || yDiff >= 50.0f) && !player->CanTeleport() && m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForIngameWarnings", 70))
     {
         // display warning at the center of the screen, hacky way?
         std::string str = "";
