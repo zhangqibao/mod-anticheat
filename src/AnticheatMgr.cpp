@@ -14,9 +14,10 @@
  */
 
 #include "AnticheatMgr.h"
+#include "Configuration/Config.h"
 #include "MapMgr.h"
 #include "Player.h"
-#include "Configuration/Config.h"
+#include <Maps/MapMgr.cpp>
 
 #define CLIMB_ANGLE 1.87f
 
@@ -201,7 +202,25 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
     float xDiff = fabs(lastX - newX);
     float yDiff = fabs(lastY - newY);
 
-    if ((xDiff >= 50.0f || yDiff >= 50.0f) && !player->CanTeleport())
+    Map* map = player->FindMap();
+
+    if ((xDiff >= 50.0f || yDiff >= 50.0f) && !player->CanTeleport() && map->IsBattlegroundOrArena())
+    {
+        if (m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForIngameWarnings", 70))
+        {
+            // display warning at the center of the screen, hacky way?
+            std::string str = "";
+            str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Possible Teleport Hack Detected!";
+            WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+            data << str;
+            sWorld->SendGlobalGMMessage(&data);
+        }
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+            LOG_INFO("module", "AnticheatMgr:: Teleport-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
+
+        BuildReport(player, TELEPORT_HACK_REPORT);
+    }
+    if ((xDiff >= 500.0f || yDiff >= 500.0f) && !player->CanTeleport() && !map->IsBattlegroundOrArena())
     {
         if (m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForIngameWarnings", 70))
         {
