@@ -30,12 +30,13 @@ class AnticheatData;
 enum ReportTypes
 {
     SPEED_HACK_REPORT = 0,
-    FLY_HACK_REPORT,
-    WALK_WATER_HACK_REPORT,
-    JUMP_HACK_REPORT,
-    TELEPORT_PLANE_HACK_REPORT,
-    CLIMB_HACK_REPORT,
-    TELEPORT_HACK_REPORT,
+    FLY_HACK_REPORT = 1,
+    WALK_WATER_HACK_REPORT = 2,
+    JUMP_HACK_REPORT = 3,
+    TELEPORT_PLANE_HACK_REPORT = 4,
+    CLIMB_HACK_REPORT = 5,
+    TELEPORT_HACK_REPORT = 6,
+    IGNORE_CONTROL_REPORT = 7
 
    // MAX_REPORT_TYPES
 };
@@ -48,7 +49,8 @@ enum DetectionTypes
     JUMP_HACK_DETECTION             = 8,
     TELEPORT_PLANE_HACK_DETECTION   = 16,
     CLIMB_HACK_DETECTION            = 32,
-    TELEPORT_HACK_DETECTION         = 64
+    TELEPORT_HACK_DETECTION         = 64,
+    IGNORE_CONTROL_DETECTION        = 128
 };
 
 // GUID is the key.
@@ -89,7 +91,8 @@ class AnticheatMgr
         void TeleportPlaneHackDetection(Player* player, MovementInfo);
         void ClimbHackDetection(Player* player,MovementInfo movementInfo,uint32 opcode);
         void TeleportHackDetection(Player* player, MovementInfo movementInfo);
-        void BuildReport(Player* player,uint8 reportType);
+        void IgnoreControlHackDetection(Player* player, MovementInfo movementInfo);
+        void BuildReport(Player* player,uint16 reportType);
 
         bool MustCheckTempReports(uint8 type);
 

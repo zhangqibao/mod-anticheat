@@ -210,13 +210,13 @@ public:
         uint32 teleportplane_reports = sAnticheatMgr->GetTypeReports(guid, 4);
         uint32 climb_reports = sAnticheatMgr->GetTypeReports(guid, 5);
         uint32 teleporthack_reports = sAnticheatMgr->GetTypeReports(guid, 6);
+        uint32 ignorecontrol_reports = sAnticheatMgr->GetTypeReports(guid, 7);
 
         handler->PSendSysMessage("Information about player %s",player->GetName().c_str());
         handler->PSendSysMessage("Average: %f || Total Reports: %u ",average,total_reports);
         handler->PSendSysMessage("Speed Reports: %u || Fly Reports: %u || Jump Reports: %u ",speed_reports,fly_reports,jump_reports);
         handler->PSendSysMessage("Walk On Water Reports: %u  || Teleport To Plane Reports: %u",waterwalk_reports,teleportplane_reports);
-        handler->PSendSysMessage("Climb Reports: %u || Teleport Hack Reports: %u", climb_reports, teleporthack_reports);
-
+        handler->PSendSysMessage("Climb Reports: %u", climb_reports);
         return true;
     }
 

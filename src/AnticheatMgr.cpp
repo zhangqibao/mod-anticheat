@@ -79,14 +79,14 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
             LOG_INFO("module", "AnticheatMgr:: Walk on Water - Hack detected and counteracted by kicking player {} ({})", player->GetName(), player->GetGUID().ToString());
 
         player->GetSession()->KickPlayer(true);
-        if(sConfigMgr->GetOption<bool>("Anticheat.AnnounceKick", true))
+        if (sConfigMgr->GetOption<bool>("Anticheat.AnnounceKick", true))
         {
             std::string plr = player->GetName();
             std::string tag_colour = "7bbef7";
             std::string plr_colour = "ff0000";
             std::ostringstream stream;
             stream << "|CFF" << plr_colour << "[AntiCheat]|r|CFF" << tag_colour <<
-                " Player |r|cff" << plr_colour <<  plr << "|r|cff" << tag_colour <<
+                " Player |r|cff" << plr_colour << plr << "|r|cff" << tag_colour <<
                 " has been kicked.|r";
             sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
         }
@@ -130,24 +130,24 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
         }
 
         player->GetSession()->KickPlayer(true);
-        if(sConfigMgr->GetOption<bool>("Anticheat.AnnounceKick", true))
+        if (sConfigMgr->GetOption<bool>("Anticheat.AnnounceKick", true))
         {
             std::string plr = player->GetName();
             std::string tag_colour = "7bbef7";
             std::string plr_colour = "ff0000";
             std::ostringstream stream;
             stream << "|CFF" << plr_colour << "[AntiCheat]|r|CFF" << tag_colour <<
-                " Player |r|cff" << plr_colour <<  plr << "|r|cff" << tag_colour <<
+                " Player |r|cff" << plr_colour << plr << "|r|cff" << tag_colour <<
                 " has been kicked.|r";
             sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
         }
     }
-    else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false)) 
+    else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
     {
         LOG_INFO("module", "AnticheatMgr:: Fly-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
     }
 
-    BuildReport(player,FLY_HACK_REPORT);
+    BuildReport(player, FLY_HACK_REPORT);
 }
 
 void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movementInfo)
@@ -179,6 +179,37 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
             LOG_INFO("module", "AnticheatMgr:: Teleport To Plane - Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
 
         BuildReport(player, TELEPORT_PLANE_HACK_REPORT);
+    }
+}
+
+void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movementInfo)
+{
+    float x, y;
+    player->GetPosition(x, y);
+    ObjectGuid key = player->GetGUID();
+
+    if (sConfigMgr->GetOption<bool>("Anticheat.IgnoreControlHack", true))
+    {
+        if (player->HasUnitState(UNIT_STATE_ROOT) && !player->GetVehicle())
+        {
+            bool unrestricted = movementInfo.pos.GetPositionX() != x || movementInfo.pos.GetPositionY() != y;
+            if (unrestricted)
+            {
+                if (m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForIngameWarnings", 70))
+                {
+                    // display warning at the center of the screen, hacky way?
+                    std::string str = "";
+                    str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Possible Ignore Control Hack Detected!";
+                    WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+                    data << str;
+                    sWorld->SendGlobalGMMessage(&data);
+                }
+                if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+                    LOG_INFO("module", "AnticheatMgr:: Ignore Control - Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
+
+                BuildReport(player, IGNORE_CONTROL_REPORT);
+            }
+        }
     }
 }
 
@@ -245,12 +276,13 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
     TeleportPlaneHackDetection(player, movementInfo);
     ClimbHackDetection(player, movementInfo, opcode);
     TeleportHackDetection(player, movementInfo);
+    IgnoreControlHackDetection(player, movementInfo);
     m_Players[key].SetLastMovementInfo(movementInfo);
     m_Players[key].SetLastOpcode(opcode);
 }
 
 // basic detection
-void AnticheatMgr::ClimbHackDetection(Player *player, MovementInfo movementInfo, uint32 opcode)
+void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
 {
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectClimbHack", false))
         return;
@@ -355,8 +387,8 @@ void AnticheatMgr::HandlePlayerLogout(Player* player)
 }
 
 void AnticheatMgr::SavePlayerData(Player* player)
-{
-    CharacterDatabase.Execute("REPLACE INTO players_reports_status (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleporthack_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{});",player->GetGUID().GetCounter(), m_Players[player->GetGUID()].GetAverage(), m_Players[player->GetGUID()].GetTotalReports(), m_Players[player->GetGUID()].GetTypeReports(SPEED_HACK_REPORT),m_Players[player->GetGUID()].GetTypeReports(FLY_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(JUMP_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(WALK_WATER_HACK_REPORT),m_Players[player->GetGUID()].GetTypeReports(TELEPORT_PLANE_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(CLIMB_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(TELEPORT_HACK_REPORT), m_Players[player->GetGUID()].GetCreationTime());
+{//                                                                  1       2         3            4           5            6                 7                     8             9               10
+    CharacterDatabase.Execute("REPLACE INTO players_reports_status (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), m_Players[player->GetGUID()].GetAverage(), m_Players[player->GetGUID()].GetTotalReports(), m_Players[player->GetGUID()].GetTypeReports(SPEED_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(FLY_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(JUMP_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(WALK_WATER_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(TELEPORT_PLANE_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(CLIMB_HACK_REPORT), m_Players[player->GetGUID()].GetCreationTime());
 }
 
 uint32 AnticheatMgr::GetTotalReports(ObjectGuid guid)
@@ -382,10 +414,13 @@ bool AnticheatMgr::MustCheckTempReports(uint8 type)
     if (type == TELEPORT_HACK_REPORT)
         return false;
 
+    if (type == IGNORE_CONTROL_REPORT)
+        return false;
+
     return true;
 }
 
-void AnticheatMgr::BuildReport(Player* player, uint8 reportType)
+void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
 {
     ObjectGuid key = player->GetGUID();
 
@@ -433,8 +468,8 @@ void AnticheatMgr::BuildReport(Player* player, uint8 reportType)
     if (sConfigMgr->GetOption<uint32>("Anticheat.MaxReportsForDailyReport", 70) < m_Players[key].GetTotalReports())
     {
         if (!m_Players[key].GetDailyReportState())
-        {
-            CharacterDatabase.Execute("REPLACE INTO daily_players_reports (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleporthack_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), m_Players[player->GetGUID()].GetAverage(), m_Players[player->GetGUID()].GetTotalReports(), m_Players[player->GetGUID()].GetTypeReports(SPEED_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(FLY_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(JUMP_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(WALK_WATER_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(TELEPORT_PLANE_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(CLIMB_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(TELEPORT_HACK_REPORT), m_Players[player->GetGUID()].GetCreationTime());
+        {//                                                                 1     2          3             4           5            6                 7                     8             9             10
+            CharacterDatabase.Execute("REPLACE INTO daily_players_reports (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), m_Players[player->GetGUID()].GetAverage(), m_Players[player->GetGUID()].GetTotalReports(), m_Players[player->GetGUID()].GetTypeReports(SPEED_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(FLY_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(JUMP_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(WALK_WATER_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(TELEPORT_PLANE_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(CLIMB_HACK_REPORT), m_Players[player->GetGUID()].GetCreationTime());
             m_Players[key].SetDailyReportState(true);
         }
     }
@@ -467,7 +502,7 @@ void AnticheatMgr::AnticheatGlobalCommand(ChatHandler* handler)
         handler->PSendSysMessage("Players with the lowest averages:");
         do
         {
-            Field *fieldsDB = resultDB->Fetch();
+            Field* fieldsDB = resultDB->Fetch();
 
             ObjectGuid guid = ObjectGuid::Create<HighGuid::Player>(fieldsDB[0].Get<uint32>());
             float average = fieldsDB[1].Get<float>();
@@ -493,7 +528,7 @@ void AnticheatMgr::AnticheatGlobalCommand(ChatHandler* handler)
         handler->PSendSysMessage("Players with the more reports:");
         do
         {
-            Field *fieldsDB = resultDB->Fetch();
+            Field* fieldsDB = resultDB->Fetch();
 
             ObjectGuid guid = ObjectGuid::Create<HighGuid::Player>(fieldsDB[0].Get<uint32>());
             float average = fieldsDB[1].Get<float>();
