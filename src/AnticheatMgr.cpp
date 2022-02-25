@@ -20,6 +20,10 @@
 
 #define CLIMB_ANGLE 1.87f
 
+#define LANG_ANTICHEAT_ALERT 30087
+#define LANG_ANTICHEAT_TELEPORT 30088
+#define LANG_ANTICHEAT_IGNORECONTROL 30089
+
 AnticheatMgr::AnticheatMgr()
 {
 }
@@ -203,6 +207,11 @@ void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movem
                     WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
                     data << str;
                     sWorld->SendGlobalGMMessage(&data);
+                    // need better way to limit chat spam
+                    if (m_Players[key].GetTotalReports() >= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Min", 70) && m_Players[key].GetTotalReports() <= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Max", 80))
+                    {
+                        sWorld->SendGMText(LANG_ANTICHEAT_IGNORECONTROL, player->GetName().c_str());
+                    }
                 }
                 if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
                     LOG_INFO("module", "AnticheatMgr:: Ignore Control - Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
@@ -242,6 +251,11 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
             WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
             data << str;
             sWorld->SendGlobalGMMessage(&data);
+            // need better way to limit chat spam
+            if (m_Players[key].GetTotalReports() >= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Min", 70) && m_Players[key].GetTotalReports() <= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Max", 80))
+            {
+                sWorld->SendGMText(LANG_ANTICHEAT_TELEPORT, player->GetName().c_str());
+            }
         }
         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
             LOG_INFO("module", "AnticheatMgr:: Teleport-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
@@ -522,6 +536,11 @@ void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
         WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
         data << str;
         sWorld->SendGlobalGMMessage(&data);
+        // need better way to limit chat spam
+        if (m_Players[key].GetTotalReports() >= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Min", 70) && m_Players[key].GetTotalReports() <= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Max", 80))
+        {
+            sWorld->SendGMText(LANG_ANTICHEAT_ALERT, player->GetName().c_str());
+        }
     }
 }
 

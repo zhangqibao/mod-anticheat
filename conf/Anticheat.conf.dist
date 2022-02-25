@@ -31,6 +31,15 @@ Anticheat.ReportsForIngameWarnings = 70
 
 Anticheat.MaxReportsForDailyReport = 70
 
+#     Anticheat.ReportinChat
+#       Description: min and max total reports to trigger gm chat message spam.
+#       Default:     So with 70 being min and 80 being max, it will spam gm in chat 10 times.
+# Anticheat.ReportinChat.Min = 70
+# Anticheat.ReportinChat.Max = 80
+
+Anticheat.ReportinChat.Min = 70
+Anticheat.ReportinChat.Max = 80
+
 #     Anticheat.LoginMessage
 #       Description: Enable login message "This server is running an Anticheat module."
 #       Default: 1 
