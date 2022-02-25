@@ -22,7 +22,7 @@ or you can manually [download the module](https://github.com/azerothcore/mod-ant
 
 ### 2) Re-run cmake and launch a clean build of AzerothCore
 
-### 3) Execute the included "conf/SQL/charactersdb_anticheat.sql" file on your characters database. This creates the necessary tables for this module.
+### 3) Execute the included "\sql\characters\base\charactersdb_anticheat.sql" file on your characters database and excute  "\sql\world\Acore_strings.sql" on your world datase. This creates the necessary tables for this module.
 
 **That's it.**
 
