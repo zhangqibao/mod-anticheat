@@ -329,7 +329,7 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
         switch (player->GetMapId())
         {        
             case 369: //Transport: DEEPRUN TRAM
-            case 607: //Transport: Strands of Strand of the Ancients
+            case 607: //Transport: Strands of the Ancients
             case 582: //Transport: Rut'theran to Auberdine
             case 584: //Transport: Menethil to Theramore
             case 586: //Transport: Exodar to Auberdine
@@ -351,13 +351,13 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
             case 622: //Transport: Orgrim's Hammer
             case 623: //Transport: The Skybreaker
             case 641: //Transport: Alliance Airship BG
-            case 642: //Transport: HordeAirshipBG
+            case 642: //Transport: Horde Airship BG
             case 647: //Transport: Orgrimmar to Thunder Bluff
             case 672: //Transport: The Skybreaker (Icecrown Citadel Raid)
             case 673: //Transport: Orgrim's Hammer (Icecrown Citadel Raid)
             case 712: //Transport: The Skybreaker (IC Dungeon)
             case 713: //Transport: Orgrim's Hammer (IC Dungeon)
-            case 718: //Trasnport: The Mighty Wind (Icecrown Citadel Raid)
+            case 718: //Transport: The Mighty Wind (Icecrown Citadel Raid)
                 return;
             break;
         }
@@ -382,6 +382,12 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
     // how long the player took to move to here.
     uint32 timeDiff = getMSTimeDiff(m_Players[key].GetLastMovementInfo().time, movementInfo.time);
 
+    if (int32(timeDiff) < 0)
+    {
+        BuildReport(player, SPEED_HACK_REPORT);
+        timeDiff = 1;
+    }
+
     if (!timeDiff)
         timeDiff = 1;
 
@@ -389,7 +395,7 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
     uint32 clientSpeedRate = distance2D * 1000 / timeDiff;
 
     // we did the (uint32) cast to accept a margin of tolerance
-    if (clientSpeedRate > speedRate)
+    if (clientSpeedRate > speedRate * 1.25f)
     {
         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
             LOG_INFO("module", "AnticheatMgr:: Speed-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
