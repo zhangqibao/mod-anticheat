@@ -132,9 +132,6 @@ public:
         loc = WorldLocation(1, 16226.5f, 16403.6f, -64.5f, 3.2f);
         pTarget->SetHomebind(loc, 876);
 
-
-
-        pTarget->SetHomebind(loc,876);
         return true;
     }
 
