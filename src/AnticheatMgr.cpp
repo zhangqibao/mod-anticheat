@@ -14,6 +14,7 @@
  */
 
 #include "AnticheatMgr.h"
+#include "Log.h"
 #include "MapMgr.h"
 #include "Player.h"
 #include "Configuration/Config.h"
@@ -79,8 +80,10 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
 
     if (sConfigMgr->GetOption<bool>("Anticheat.KickPlayerWaterWalkHack", false))
     {
-        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+        {
             LOG_INFO("module", "AnticheatMgr:: Walk on Water - Hack detected and counteracted by kicking player {} ({})", player->GetName(), player->GetGUID().ToString());
+        }
 
         player->GetSession()->KickPlayer(true);
         if (sConfigMgr->GetOption<bool>("Anticheat.AnnounceKick", true))
@@ -95,7 +98,7 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
             sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
         }
     }
-    else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+    else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
     {
         LOG_INFO("module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
     }
@@ -128,7 +131,7 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
 
     if (sConfigMgr->GetOption<bool>("Anticheat.KickPlayerFlyHack", false))
     {
-        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
         {
             LOG_INFO("module", "AnticheatMgr:: Fly-Hack detected and counteracted by kicking player {} ({})", player->GetName(), player->GetGUID().ToString());
         }
@@ -146,7 +149,7 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
             sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
         }
     }
-    else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+    else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
     {
         LOG_INFO("module", "AnticheatMgr:: Fly-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
     }
@@ -179,8 +182,10 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
     // we are not really walking there
     if (z_diff > 1.0f)
     {
-        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+        {
             LOG_INFO("module", "AnticheatMgr:: Teleport To Plane - Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
+        }
 
         BuildReport(player, TELEPORT_PLANE_HACK_REPORT);
     }
@@ -213,8 +218,10 @@ void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movem
                         sWorld->SendGMText(LANG_ANTICHEAT_IGNORECONTROL, player->GetName().c_str());
                     }
                 }
-                if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+                if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+                {
                     LOG_INFO("module", "AnticheatMgr:: Ignore Control - Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
+                }
 
                 BuildReport(player, IGNORE_CONTROL_REPORT);
             }
@@ -257,8 +264,10 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
                 sWorld->SendGMText(LANG_ANTICHEAT_TELEPORT, player->GetName().c_str());
             }
         }
-        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+        {
             LOG_INFO("module", "AnticheatMgr:: Teleport-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
+        }
 
         BuildReport(player, TELEPORT_HACK_REPORT);
     }
@@ -322,8 +331,10 @@ void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo,
 
     if (angle > CLIMB_ANGLE)
     {
-        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+        {
             LOG_INFO("module", "AnticheatMgr:: Climb-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
+        }
 
         BuildReport(player, CLIMB_HACK_REPORT);
     }
@@ -411,8 +422,10 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
     // we did the (uint32) cast to accept a margin of tolerance
     if (clientSpeedRate > speedRate * 1.25f)
     {
-        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", false))
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+        {
             LOG_INFO("module", "AnticheatMgr:: Speed-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
+        }
 
         BuildReport(player, SPEED_HACK_REPORT);
     }
