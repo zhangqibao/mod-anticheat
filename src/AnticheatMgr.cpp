@@ -78,27 +78,7 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
         return;
     }
 
-    if (sConfigMgr->GetOption<bool>("Anticheat.KickPlayerWaterWalkHack", false))
-    {
-        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
-        {
-            LOG_INFO("module", "AnticheatMgr:: Walk on Water - Hack detected and counteracted by kicking player {} ({})", player->GetName(), player->GetGUID().ToString());
-        }
-
-        player->GetSession()->KickPlayer(true);
-        if (sConfigMgr->GetOption<bool>("Anticheat.AnnounceKick", true))
-        {
-            std::string plr = player->GetName();
-            std::string tag_colour = "7bbef7";
-            std::string plr_colour = "ff0000";
-            std::ostringstream stream;
-            stream << "|CFF" << plr_colour << "[AntiCheat]|r|CFF" << tag_colour <<
-                " Player |r|cff" << plr_colour << plr << "|r|cff" << tag_colour <<
-                " has been kicked.|r";
-            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
-        }
-    }
-    else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+    if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
     {
         LOG_INFO("module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
     }
@@ -129,27 +109,7 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
         return;
     }
 
-    if (sConfigMgr->GetOption<bool>("Anticheat.KickPlayerFlyHack", false))
-    {
-        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
-        {
-            LOG_INFO("module", "AnticheatMgr:: Fly-Hack detected and counteracted by kicking player {} ({})", player->GetName(), player->GetGUID().ToString());
-        }
-
-        player->GetSession()->KickPlayer(true);
-        if (sConfigMgr->GetOption<bool>("Anticheat.AnnounceKick", true))
-        {
-            std::string plr = player->GetName();
-            std::string tag_colour = "7bbef7";
-            std::string plr_colour = "ff0000";
-            std::ostringstream stream;
-            stream << "|CFF" << plr_colour << "[AntiCheat]|r|CFF" << tag_colour <<
-                " Player |r|cff" << plr_colour << plr << "|r|cff" << tag_colour <<
-                " has been kicked.|r";
-            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
-        }
-    }
-    else if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+    if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
     {
         LOG_INFO("module", "AnticheatMgr:: Fly-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
     }
@@ -567,6 +527,63 @@ void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
         if (m_Players[key].GetTotalReports() >= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Min", 70) && m_Players[key].GetTotalReports() <= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Max", 80))
         {
             sWorld->SendGMText(LANG_ANTICHEAT_ALERT, player->GetName().c_str(), player->GetName().c_str());
+        }
+    }
+
+    if (sConfigMgr->GetOption<bool>("Anticheat.KickPlayer", true) && m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForKick", 70))
+    {
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+        {
+            LOG_INFO("module", "AnticheatMgr:: Reports reached assigned threshhold and counteracted by kicking player {} ({})", player->GetName(), player->GetGUID().ToString());
+        }
+        // display warning at the center of the screen, hacky way?
+        std::string str = "";
+        str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Auto Kicked for Reaching Cheat Threshhold!";
+        WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+        data << str;
+        sWorld->SendGlobalGMMessage(&data);
+
+        player->GetSession()->KickPlayer(true);
+        if (sConfigMgr->GetOption<bool>("Anticheat.AnnounceKick", true))
+        {
+            std::string plr = player->GetName();
+            std::string tag_colour = "7bbef7";
+            std::string plr_colour = "ff0000";
+            std::ostringstream stream;
+            stream << "|CFF" << plr_colour << "[AntiCheat]|r|CFF" << tag_colour <<
+                " Player |r|cff" << plr_colour << plr << "|r|cff" << tag_colour <<
+                " has been kicked by the Anticheat Module.|r";
+            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+        }
+    }
+
+    if (sConfigMgr->GetOption<bool>("Anticheat.BanPlayer", true) && m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForBan", 70))
+    {
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+        {
+            LOG_INFO("module", "AnticheatMgr:: Reports reached assigned threshhold and counteracted by banning player {} ({})", player->GetName(), player->GetGUID().ToString());
+        }
+        // display warning at the center of the screen, hacky way?
+        std::string str = "";
+        str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Auto Banned Account for Reaching Cheat Threshhold!";
+        WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+        data << str;
+        sWorld->SendGlobalGMMessage(&data);
+
+        std::string accountName;
+        AccountMgr::GetName(player->GetSession()->GetAccountId(), accountName);
+        sBan->BanAccount(accountName, "0s", "Anticheat module Auto Banned Account for Reach Cheat Threshhold", "Server");
+
+        if (sConfigMgr->GetOption<bool>("Anticheat.AnnounceBan", true))
+        {
+            std::string plr = player->GetName();
+            std::string tag_colour = "7bbef7";
+            std::string plr_colour = "ff0000";
+            std::ostringstream stream;
+            stream << "|CFF" << plr_colour << "[AntiCheat]|r|CFF" << tag_colour <<
+                " Player |r|cff" << plr_colour << plr << "|r|cff" << tag_colour <<
+                " has been Banned by the Anticheat Module.|r";
+            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
         }
     }
 }
