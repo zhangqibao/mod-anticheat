@@ -29,3 +29,19 @@ or you can manually [download the module](https://github.com/azerothcore/mod-ant
 ### (Optional) Edit module configuration
 
 If you need to change the module configuration, go to your server configuration folder (e.g. **etc**), copy `Anticheat.conf.dist` to `Anticheat.conf` and edit it as you prefer.
+
+# Known issues and TODO list:
+
+- [ ] Identify any class\spells that gives false positives, so far only blink and killingspree has been reported
+- [ ] Currently no dedicated collumn for ignore control or teleport hack reporting, but the numbers are added to total report. Custom Messages are adjusted in trinity_string for those two anticheats. The reason being is for some damn reason we are getting unrealistic high numbers being reported in the sql if i add in another collumn or two. I have no idea why that happens.
+
+# Localize Acore_Strings
+- [x] LOCALE_enUS = 0
+- [ ] LOCALE_koKR = 1
+- [ ] LOCALE_frFR = 2
+- [ ] LOCALE_deDE = 3
+- [ ] LOCALE_zhCN = 4
+- [ ] LOCALE_zhTW = 5
+- [ ] LOCALE_esES = 6
+- [ ] LOCALE_esMX = 7
+- [ ] LOCALE_ruRU = 8
