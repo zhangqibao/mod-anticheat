@@ -264,7 +264,7 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
 // basic detection
 void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
 {
-    if (!sConfigMgr->GetOption<bool>("Anticheat.DetectClimbHack", false))
+    if (!sConfigMgr->GetOption<bool>("Anticheat.DetectClimbHack", true))
         return;
 
     ObjectGuid key = player->GetGUID();
