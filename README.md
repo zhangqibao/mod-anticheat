@@ -1,6 +1,10 @@
-# ![logo](https://raw.githubusercontent.com/azerothcore/azerothcore.github.io/master/images/logo-github.png) AzerothCore
+﻿# ![logo](https://raw.githubusercontent.com/azerothcore/azerothcore.github.io/master/images/logo-github.png) AzerothCore
+
+[English](README.md) | [Español](README_ES.md)
+
 ## Anticheat Module
-- Latest build status with azerothcore: [![Build Status](https://github.com/azerothcore/mod-anticheat/workflows/core-build/badge.svg?branch=master&event=push)](https://github.com/azerothcore/mod-anticheat)
+
+- Latest build status with AzerothCore: [![Build Status](https://github.com/azerothcore/mod-anticheat/workflows/core-build/badge.svg?branch=master&event=push)](https://github.com/azerothcore/mod-anticheat)
 
 This is a port of the PassiveAnticheat Script from lordpsyan's repo to [AzerothCore](http://www.azerothcore.org)
 
@@ -42,6 +46,6 @@ If you need to change the module configuration, go to your server configuration 
 - [ ] LOCALE_deDE = 3
 - [ ] LOCALE_zhCN = 4
 - [ ] LOCALE_zhTW = 5
-- [ ] LOCALE_esES = 6
-- [ ] LOCALE_esMX = 7
+- [x] LOCALE_esES = 6
+- [x] LOCALE_esMX = 7
 - [ ] LOCALE_ruRU = 8
