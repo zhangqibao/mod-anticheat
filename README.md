@@ -47,5 +47,5 @@ If you need to change the module configuration, go to your server configuration 
 - [ ] LOCALE_zhCN = 4
 - [ ] LOCALE_zhTW = 5
 - [x] LOCALE_esES = 6
-- [ ] LOCALE_esMX = 7
+- [x] LOCALE_esMX = 7
 - [ ] LOCALE_ruRU = 8

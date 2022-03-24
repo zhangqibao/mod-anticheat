@@ -47,5 +47,5 @@ Si necesita cambiar la configuración del módulo, vaya a la carpeta de configur
 - [ ] LOCALE_zhCN = 4
 - [ ] LOCALE_zhTW = 5
 - [x] LOCALE_esES = 6
-- [ ] LOCALE_esMX = 7
+- [x] LOCALE_esMX = 7
 - [ ] LOCALE_ruRU = 8
