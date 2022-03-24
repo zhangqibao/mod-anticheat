@@ -123,12 +123,11 @@ public:
         pTarget->TeleportTo(1,16226.5f,16403.6f,-64.5f,3.2f);
         handler->GetSession()->GetPlayer()->TeleportTo(1,16226.5f,16403.6f,-64.5f,3.2f);
 
-        // the player should be already there, but no :(
-        // pTarget->GetPosition(&loc);
-
         WorldLocation loc;
-        loc = WorldLocation(1, 16226.5f, 16403.6f, -64.5f, 3.2f);
-        pTarget->SetHomebind(loc, 876);
+        loc = WorldLocation(1, 16226.5f, 16403.6f, -64.5f, 3.2f);// GM Jail Location
+        pTarget->TeleportTo(loc);
+        pTarget->SetHomebind(loc, 876);// GM Jail Homebind location
+        pTarget->CastSpell(pTarget, 9454);// freeze him in place to ensure no exploit happens for jail break attempt
 
         return true;
     }
