@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 2 of the License, or (at your
@@ -39,6 +39,7 @@ public:
             { "player",         SEC_GAMEMASTER,     true,   &HandleAntiCheatPlayerCommand,  "" },
             { "delete",         SEC_ADMINISTRATOR,  true,   &HandleAntiCheatDeleteCommand,  "" },
             { "jail",           SEC_GAMEMASTER,     false,  &HandleAnticheatJailCommand,    "" },
+            { "parole",         SEC_GAMEMASTER,     false,  &HandleAnticheatParoleCommand,  "" },
             { "warn",           SEC_GAMEMASTER,     true,   &HandleAnticheatWarnCommand,    "" }
         };
 
@@ -127,6 +128,58 @@ public:
         pTarget->TeleportTo(loc);
         pTarget->SetHomebind(loc, 876); // GM Jail Homebind location
         pTarget->CastSpell(pTarget, 38505); // Shackle him in place to ensure no exploit happens for jail break attempt
+
+        return true;
+    }
+
+    static bool HandleAnticheatParoleCommand(ChatHandler* handler, const char* args)
+    {
+        if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
+            return false;
+
+        Player* pTarget = NULL;
+
+        std::string strCommand;
+
+        char* command = strtok((char*)args, " ");
+
+        if (command)
+        {
+            strCommand = command;
+            normalizePlayerName(strCommand);
+
+            pTarget = ObjectAccessor::FindPlayerByName(strCommand.c_str()); // get player by name
+        }
+        else
+            pTarget = handler->getSelectedPlayer();
+
+        if (!pTarget)
+        {
+            handler->SendSysMessage(LANG_PLAYER_NOT_FOUND);
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        if (pTarget == handler->GetSession()->GetPlayer())
+            return false;
+
+        WorldLocation Aloc;
+        WorldLocation Hloc;
+        Aloc = WorldLocation(0, -8833.37f, 628.62f, 94.00f, 1.06f);// Stormwind
+        Hloc = WorldLocation(1, 1569.59f, -4397.63f, 16.06f, 0.54f);// Orgrimmar
+
+        if (pTarget->GetTeamId() == TEAM_ALLIANCE)
+        {
+            pTarget->TeleportTo(0, -8833.37f, 628.62f, 94.00f, 1.06f);//Stormwind
+            pTarget->SetHomebind(Aloc, 1519);// Stormwind Homebind location
+        }
+        else
+        {
+            pTarget->TeleportTo(1, 1569.59f, -4397.63f, 16.06f, 0.54f);//Orgrimmar
+            pTarget->SetHomebind(Hloc, 1653);// Orgrimmar Homebind location
+        }
+        pTarget->RemoveAura(38505);// remove shackles
+        sAnticheatMgr->AnticheatDeleteCommand(pTarget->GetGUID());// deletes auto reports on player
 
         return true;
     }
