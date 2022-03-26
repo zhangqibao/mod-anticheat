@@ -175,7 +175,7 @@ public:
         }
         else
         {
-            pTarget->TeleportTo(1, 1569.59f, -4397.63f, 16.06f, 0.54f);//Orgrimmar
+            pTarget->TeleportTo(1, 1569.59f, -4397.63f, 7.7f, 0.54f);//Orgrimmar
             pTarget->SetHomebind(Hloc, 1653);// Orgrimmar Homebind location
         }
         pTarget->RemoveAura(38505);// remove shackles
