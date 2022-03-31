@@ -191,6 +191,10 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectZaxisHack", true))
         return;
 
+    // if we are a ghost we can walk on water may false flag z -axis
+    if (player->HasAuraType(SPELL_AURA_GHOST))
+        return;
+
     if (movementInfo.HasMovementFlag(MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING))
         return;
  
