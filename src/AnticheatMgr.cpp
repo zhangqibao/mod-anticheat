@@ -195,24 +195,27 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
     if (player->HasAuraType(SPELL_AURA_GHOST))
         return;
 
-    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING))
+    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING | MOVEMENTFLAG_SWIMMING))
         return;
- 
+
     ObjectGuid key = player->GetGUID();
- 
+
     float lastX = m_Players[key].GetLastMovementInfo().pos.GetPositionX();
     float newX = movementInfo.pos.GetPositionX();
- 
+
     float lastY = m_Players[key].GetLastMovementInfo().pos.GetPositionY();
     float newY = movementInfo.pos.GetPositionY();
- 
+
     float xDiff = fabs(lastX - newX);
     float yDiff = fabs(lastY - newY);
- 
+
     float groundZ_vmap = player->GetMap()->GetHeight(player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), true, 50.0f);
     float groundZ_dyntree = player->GetMap()->GetDynamicMapTree().getHeight(player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), 50.0f, player->GetPhaseMask());
     float groundZ = std::max<float>(groundZ_vmap, groundZ_dyntree);
- 
+
+    if (m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_WATERWALKING) && movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING))
+        return;
+
     if ((xDiff || yDiff) && m_Players[key].GetLastMovementInfo().pos.GetPositionZ() == movementInfo.pos.GetPositionZ()
         && player->GetPositionZ() >= groundZ + 5.0f)
     {
