@@ -16,7 +16,6 @@
 #ifndef SC_ACMGR_H
 #define SC_ACMGR_H
 
-//#include <ace/Singleton.h>
 #include "Common.h"
 #include "SharedDefines.h"
 #include "ScriptMgr.h"
@@ -59,7 +58,6 @@ typedef std::map<ObjectGuid, AnticheatData> AnticheatPlayersDataMap;
 
 class AnticheatMgr
 {
-//    friend class ACE_Singleton<AnticheatMgr, ACE_Null_Mutex>;
     AnticheatMgr();
     ~AnticheatMgr();
 
