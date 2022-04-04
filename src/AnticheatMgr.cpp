@@ -218,11 +218,11 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
 
     switch (player->GetAreaId())
     {
-    case 4281: //Acherus: The Ebon Hold
-    case 4342: //Acherus: The Ebon Hold
-        return;
+        case 4281: //Acherus: The Ebon Hold
+        case 4342: //Acherus: The Ebon Hold
+            return;
         break;
-    default:
+            default:
         break;// Should never happen
     }
 
