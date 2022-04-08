@@ -478,17 +478,12 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
     // We check the last MovementInfo for the falling flag since falling down a hill and sliding a bit triggered a false positive
     if ((clientSpeedRate > speedRate * 1.25f) && !m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_FALLING))
     {
-        if (!player->CanTeleport())
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
         {
-            if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
-            {
-                LOG_INFO("module", "AnticheatMgr:: Speed-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
-            }
-
-            BuildReport(player, SPEED_HACK_REPORT);
+            LOG_INFO("module", "AnticheatMgr:: Speed-Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
         }
-        else if (player->CanTeleport())
-            player->SetCanTeleport(false);
+
+        BuildReport(player, SPEED_HACK_REPORT);
     }
 }
 
