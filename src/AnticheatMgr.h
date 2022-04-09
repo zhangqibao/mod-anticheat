@@ -80,7 +80,7 @@ class AnticheatMgr
 
         void AnticheatGlobalCommand(ChatHandler* handler);
         void AnticheatDeleteCommand(ObjectGuid guid);
-
+        void AnticheatPurgeCommand(ChatHandler* handler);
         void ResetDailyReportStates();
     private:
         void SpeedHackDetection(Player* player, MovementInfo movementInfo);

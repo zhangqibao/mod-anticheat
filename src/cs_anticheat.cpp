@@ -40,6 +40,7 @@ public:
             { "delete",         SEC_ADMINISTRATOR,  true,   &HandleAntiCheatDeleteCommand,  "" },
             { "jail",           SEC_GAMEMASTER,     false,  &HandleAnticheatJailCommand,    "" },
             { "parole",         SEC_GAMEMASTER,     false,  &HandleAnticheatParoleCommand,  "" },
+            { "purge",          SEC_ADMINISTRATOR,  true,   &HandleAntiCheatPurgeCommand,   "" },
             { "warn",           SEC_GAMEMASTER,     true,   &HandleAnticheatWarnCommand,    "" }
         };
 
@@ -274,6 +275,13 @@ public:
 
         sAnticheatMgr->AnticheatGlobalCommand(handler);
 
+        return true;
+    }
+
+    static bool HandleAntiCheatPurgeCommand(ChatHandler* handler, const char* /* args */)
+    {
+        sAnticheatMgr->AnticheatPurgeCommand(handler);
+        handler->PSendSysMessage("The Anticheat daily_player_reports has been purged.");
         return true;
     }
 };

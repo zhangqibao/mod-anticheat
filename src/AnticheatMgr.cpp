@@ -781,6 +781,11 @@ void AnticheatMgr::AnticheatDeleteCommand(ObjectGuid guid)
     }
 }
 
+void AnticheatMgr::AnticheatPurgeCommand(ChatHandler* handler)
+{
+    CharacterDatabase.Execute("TRUNCATE TABLE daily_players_reports;");
+}
+
 void AnticheatMgr::ResetDailyReportStates()
 {
     for (AnticheatPlayersDataMap::iterator it = m_Players.begin(); it != m_Players.end(); ++it)
