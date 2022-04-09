@@ -417,6 +417,11 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
     uint32 distance2D = (uint32)movementInfo.pos.GetExactDist2d(&m_Players[key].GetLastMovementInfo().pos);
     uint8 moveType = 0;
 
+    // We don't need to check for a speedhack if the player hasn't moved
+    // This is necessary since MovementHandler fires if you rotate the camera in place
+    if (!distance2D)
+        return;
+
     // we need to know HOW is the player moving
     // TO-DO: Should we check the incoming movement flags?
     if (player->HasUnitMovementFlag(MOVEMENTFLAG_SWIMMING))
