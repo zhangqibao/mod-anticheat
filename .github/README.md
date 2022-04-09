@@ -8,6 +8,10 @@
 
 This is a port of the PassiveAnticheat Script from lordpsyan's repo to [AzerothCore](http://www.azerothcore.org)
 
+## Wiki
+
+https://github.com/azerothcore/mod-anticheat/wiki
+
 ## Notice
 
 Requires revision [c50f7feda](https://github.com/azerothcore/azerothcore-wotlk/commit/c50f7feda0ee360f7bcca7f004bf6fb22abde533) or newer.
@@ -36,7 +40,7 @@ If you need to change the module configuration, go to your server configuration 
 
 # Known issues and TODO list:
 
-- [ ] Identify any class\spells that gives false positives, so far only blink and killingspree has been reported
+- [x] ~~Identify any class\spells that gives false positives, so far only blink and killingspree has been reported~~
 - [ ] Currently no dedicated collumn for ignore control or teleport hack reporting, but the numbers are added to total report. Custom Messages are adjusted in `acore_string` for those two anticheats. The reason being is for some damn reason we are getting unrealistic high numbers being reported in the sql if i add in another collumn or two. I have no idea why that happens.
 
 # Localize Acore_Strings
