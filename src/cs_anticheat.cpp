@@ -26,6 +26,13 @@
 
 using namespace Acore::ChatCommands;
 
+enum Spells
+{
+    SHACKLES = 38505,
+    LFG_SPELL_DUNGEON_DESERTER = 71041,
+    BG_SPELL_DESERTER = 26013
+};
+
 class anticheat_commandscript : public CommandScript
 {
 public:
@@ -128,7 +135,9 @@ public:
         loc = WorldLocation(1, 16226.5f, 16403.6f, -64.5f, 3.2f); // GM Jail Location
         pTarget->TeleportTo(loc);
         pTarget->SetHomebind(loc, 876); // GM Jail Homebind location
-        pTarget->CastSpell(pTarget, 38505); // Shackle him in place to ensure no exploit happens for jail break attempt
+        pTarget->CastSpell(pTarget, SHACKLES); // Shackle him in place to ensure no exploit happens for jail break attempt
+        pTarget->AddAura(LFG_SPELL_DUNGEON_DESERTER, pTarget); // LFG_SPELL_DUNGEON_DESERTER
+        pTarget->AddAura(BG_SPELL_DESERTER, pTarget); // BG_SPELL_DESERTER
 
         return true;
     }
@@ -179,7 +188,9 @@ public:
             pTarget->TeleportTo(1, 1569.59f, -4397.63f, 7.7f, 0.54f);//Orgrimmar
             pTarget->SetHomebind(Hloc, 1653);// Orgrimmar Homebind location
         }
-        pTarget->RemoveAura(38505);// remove shackles
+        pTarget->RemoveAura(SHACKLES);// remove shackles
+        pTarget->RemoveAura(LFG_SPELL_DUNGEON_DESERTER);// LFG_SPELL_DUNGEON_DESERTER
+        pTarget->RemoveAura(BG_SPELL_DESERTER);// BG_SPELL_DESERTER
         sAnticheatMgr->AnticheatDeleteCommand(pTarget->GetGUID());// deletes auto reports on player
 
         return true;
