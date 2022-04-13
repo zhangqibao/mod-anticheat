@@ -19,6 +19,7 @@
 #include "AnticheatMgr.h"
 #include "Configuration/Config.h"
 #include "Player.h"
+#include "SpellAuras.h"
 
 #if AC_COMPILER == AC_COMPILER_GNU
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -136,8 +137,10 @@ public:
         pTarget->TeleportTo(loc);
         pTarget->SetHomebind(loc, 876); // GM Jail Homebind location
         pTarget->CastSpell(pTarget, SHACKLES); // Shackle him in place to ensure no exploit happens for jail break attempt
-        pTarget->AddAura(LFG_SPELL_DUNGEON_DESERTER, pTarget); // LFG_SPELL_DUNGEON_DESERTER
-        pTarget->AddAura(BG_SPELL_DESERTER, pTarget); // BG_SPELL_DESERTER
+        Aura* dungdesert = pTarget->AddAura(LFG_SPELL_DUNGEON_DESERTER, pTarget);// LFG_SPELL_DUNGEON_DESERTER
+        Aura* bgdesert = pTarget->AddAura(BG_SPELL_DESERTER, pTarget);// BG_SPELL_DESERTER
+        dungdesert->SetDuration(2147483647 * IN_MILLISECONDS);
+        bgdesert->SetDuration(2147483647 * IN_MILLISECONDS);
 
         return true;
     }
