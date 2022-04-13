@@ -139,8 +139,8 @@ public:
         pTarget->CastSpell(pTarget, SHACKLES); // Shackle him in place to ensure no exploit happens for jail break attempt
         Aura* dungdesert = pTarget->AddAura(LFG_SPELL_DUNGEON_DESERTER, pTarget);// LFG_SPELL_DUNGEON_DESERTER
         Aura* bgdesert = pTarget->AddAura(BG_SPELL_DESERTER, pTarget);// BG_SPELL_DESERTER
-        dungdesert->SetDuration(2147483647 * IN_MILLISECONDS);
-        bgdesert->SetDuration(2147483647 * IN_MILLISECONDS);
+        dungdesert->SetDuration(-1000 * IN_MILLISECONDS);
+        bgdesert->SetDuration(-1000 * IN_MILLISECONDS);
 
         return true;
     }
