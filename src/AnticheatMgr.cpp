@@ -692,8 +692,8 @@ void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
         player->CastSpell(player, SHACKLES); // Shackle him in place to ensure no exploit happens for jail break attempt
         Aura* dungdesert = player->AddAura(LFG_SPELL_DUNGEON_DESERTER, player);// LFG_SPELL_DUNGEON_DESERTER
         Aura* bgdesert = player->AddAura(BG_SPELL_DESERTER, player);// BG_SPELL_DESERTER
-        dungdesert->SetDuration(-1000 * IN_MILLISECONDS);
-        bgdesert->SetDuration(-1000 * IN_MILLISECONDS);
+        dungdesert->SetDuration(-1);
+        bgdesert->SetDuration(-1);
 
         if (sConfigMgr->GetOption<bool>("Anticheat.AnnounceJail", true))
         {
