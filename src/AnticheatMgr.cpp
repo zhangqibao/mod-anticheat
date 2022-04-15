@@ -61,6 +61,22 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectWaterWalkHack", true))
         return;
 
+    ObjectGuid key = player->GetGUID();
+
+    LiquidData liquidData;
+
+    if (player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK)
+    {
+        if (!m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_WATERWALKING) && !movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING))
+        {
+            if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+            {
+                LOG_INFO("module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({})", player->GetName(), player->GetGUID().ToString());
+            }
+            BuildReport(player, WALK_WATER_HACK_REPORT);
+        }
+    }
+
     // ghost can water walk
     if (player->HasAuraType(SPELL_AURA_GHOST))
         return;
@@ -70,8 +86,6 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
     if (player->HasAuraType(SPELL_AURA_GHOST) && player->HasAura(15007))
         return;
 
-    ObjectGuid key = player->GetGUID();
-    /* Thanks to @LilleCarl */
     if (m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_WATERWALKING) && movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING))
     {
         if (player->HasAuraType(SPELL_AURA_WATER_WALK) || player->HasAuraType(SPELL_AURA_FEATHER_FALL) ||
