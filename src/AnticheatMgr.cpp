@@ -63,8 +63,6 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
 
     ObjectGuid key = player->GetGUID();
 
-    LiquidData liquidData;
-
     if (player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK)
     {
         if (!m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_WATERWALKING) && !movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING))
