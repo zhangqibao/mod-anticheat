@@ -63,6 +63,13 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
 
     ObjectGuid key = player->GetGUID();
 
+    uint32 distance2D = (uint32)movementInfo.pos.GetExactDist2d(&m_Players[key].GetLastMovementInfo().pos);
+
+    // We don't need to check for a water walking hack if the player hasn't moved
+    // This is necessary since MovementHandler fires if you rotate the camera in place
+    if (!distance2D)
+        return;
+
     if (player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK)
     {
         if (!m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_WATERWALKING) && !movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING))
@@ -370,11 +377,11 @@ void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo,
     Position playerPos = player->GetPosition();
 
     float deltaZ = fabs(playerPos.GetPositionZ() - movementInfo.pos.GetPositionZ());
-    float deltaXY = movementInfo.pos.GetExactDist2d(&playerPos);
+    float deltaXY = movementInfo.pos.GetExactDist2d(m_Players[key].GetLastMovementInfo().pos);
 
     float angle = Position::NormalizeOrientation(tan(deltaZ / deltaXY));
 
-    if ((angle > CLIMB_ANGLE) && !m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_FALLING))
+    if (angle > CLIMB_ANGLE)
     {
         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
         {
