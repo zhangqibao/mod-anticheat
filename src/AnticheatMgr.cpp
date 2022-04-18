@@ -705,9 +705,18 @@ void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
         Aura* dungdesert = player->AddAura(LFG_SPELL_DUNGEON_DESERTER, player);// LFG_SPELL_DUNGEON_DESERTER
         Aura* bgdesert = player->AddAura(BG_SPELL_DESERTER, player);// BG_SPELL_DESERTER
         Aura* silent = player->AddAura(SILENCED, player);// SILENCED
-        dungdesert->SetDuration(-1);
-        bgdesert->SetDuration(-1);
-        silent->SetDuration(-1);
+        if (dungdesert)// LFG_SPELL_DUNGEON_DESERTER
+        {
+            dungdesert->SetDuration(-1);
+        }
+        if (bgdesert)// BG_SPELL_DESERTER
+        {
+            bgdesert->SetDuration(-1);
+        }
+        if (silent)// SILENCED
+        {
+            silent->SetDuration(-1);
+        }
 
         if (sConfigMgr->GetOption<bool>("Anticheat.AnnounceJail", true))
         {
