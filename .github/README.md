@@ -40,7 +40,6 @@ If you need to change the module configuration, go to your server configuration 
 
 # Known issues and TODO list:
 
-- [x] ~~Identify any class\spells that gives false positives, so far only blink and killingspree has been reported~~
 - [ ] Currently no dedicated collumn for ignore control or teleport hack reporting, but the numbers are added to total report. Custom Messages are adjusted in `acore_string` for those two anticheats. The reason being is for some damn reason we are getting unrealistic high numbers being reported in the sql if i add in another collumn or two. I have no idea why that happens.
 
 # Localize Acore_Strings
