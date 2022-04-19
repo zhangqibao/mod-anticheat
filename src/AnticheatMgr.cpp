@@ -250,8 +250,6 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
         case 4342: //Acherus: The Ebon Hold
             return;
         break;
-            default:
-        break;// Should never happen
     }
 
     if ((xDiff || yDiff) && m_Players[key].GetLastMovementInfo().pos.GetPositionZ() == movementInfo.pos.GetPositionZ()
@@ -402,6 +400,7 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
     // If we just check the flag, they could always add that flag and always skip the speed hacking detection.
 
     if (m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT) && player->GetMapId())
+    {
         switch (player->GetMapId())
         {
             case 369: //Transport: DEEPRUN TRAM
@@ -435,8 +434,8 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
             case 713: //Transport: Orgrim's Hammer (IC Dungeon)
             case 718: //Transport: The Mighty Wind (Icecrown Citadel Raid)
                 return;
-            break;
         }
+    }
 
     uint32 distance2D = (uint32)movementInfo.pos.GetExactDist2d(&m_Players[key].GetLastMovementInfo().pos);
     uint8 moveType = 0;
