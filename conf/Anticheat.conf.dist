@@ -40,6 +40,13 @@ Anticheat.MaxReportsForDailyReport = 70
 Anticheat.ReportinChat.Min = 70
 Anticheat.ReportinChat.Max = 80
 
+#     Anticheat.AlertFrequency
+#       Description: Once Ingame warngings and report in chat min is met, this will throttle to alert the gms every other count
+#       Default:     So with 5 being the default, u will get a message alert for every 5 violations.
+#       Anticheat.AlertFrequency = 5
+
+Anticheat.AlertFrequency = 5
+
 #     Anticheat.LoginMessage
 #       Description: Enable login message "This server is running an Anticheat module."
 #       Default: 1 
