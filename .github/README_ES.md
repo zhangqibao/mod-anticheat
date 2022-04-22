@@ -40,7 +40,7 @@ Si necesita cambiar la configuración del módulo, vaya a la carpeta de configur
 
 # Problemas conocidos y lista de TODO:
 
-- [ ] CActualmente no hay una columna dedicada para ignorar el control o el informe de hack de teletransporte, pero los números se agregan al informe total. Los mensajes personalizados se ajustan en `acore_string` para esos dos anticheats. La razón es que, por alguna maldita razón, estamos obteniendo números altos poco realistas que se informan en el sql si agrego otra columna o dos. No tengo idea de por qué sucede eso.
+- [ ] Localizar
 
 # Localizar Acore_Strings
 - [x] LOCALE_enUS = 0
