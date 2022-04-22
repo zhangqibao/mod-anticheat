@@ -40,7 +40,7 @@ If you need to change the module configuration, go to your server configuration 
 
 # Known issues and TODO list:
 
-- [ ] Currently no dedicated collumn for ignore control or teleport hack reporting, but the numbers are added to total report. Custom Messages are adjusted in `acore_string` for those two anticheats. The reason being is for some damn reason we are getting unrealistic high numbers being reported in the sql if i add in another collumn or two. I have no idea why that happens.
+- [ ] Localize
 
 # Localize Acore_Strings
 - [x] LOCALE_enUS = 0
