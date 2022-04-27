@@ -376,13 +376,19 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
 
     SpeedHackDetection(player, movementInfo);
     FlyHackDetection(player, movementInfo);
-    WalkOnWaterHackDetection(player, movementInfo);
     JumpHackDetection(player, movementInfo, opcode);
     TeleportPlaneHackDetection(player, movementInfo);
     ClimbHackDetection(player, movementInfo, opcode);
     TeleportHackDetection(player, movementInfo);
     IgnoreControlHackDetection(player, movementInfo);
-    ZAxisHackDetection(player, movementInfo);
+    if (player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK)
+    {
+        WalkOnWaterHackDetection(player, movementInfo);
+    }
+    else
+    {
+        ZAxisHackDetection(player, movementInfo);
+    }
     m_Players[key].SetLastMovementInfo(movementInfo);
     m_Players[key].SetLastOpcode(opcode);
 }
