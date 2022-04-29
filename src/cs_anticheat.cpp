@@ -178,7 +178,10 @@ public:
             if (!player)
                 handler->PSendSysMessage("Player doesn't exist");
             else
+            {
                 sAnticheatMgr->AnticheatDeleteCommand(player->GetGUID());
+                handler->PSendSysMessage("Anticheat Reports deleted for player {}", player->GetName().c_str());
+            }
         }
 
         return true;
@@ -212,12 +215,12 @@ public:
         uint32 ignorecontrol_reports = sAnticheatMgr->GetTypeReports(guid, 7);
         uint32 zaxis_reports = sAnticheatMgr->GetTypeReports(guid, 8);
 
-        handler->PSendSysMessage("Information about player %s", player->GetName().c_str());
-        handler->PSendSysMessage("Average: %f || Total Reports: %u ", average, total_reports);
-        handler->PSendSysMessage("Speed Reports: %u || Fly Reports: %u || Jump Reports: %u ", speed_reports, fly_reports, jump_reports);
-        handler->PSendSysMessage("Walk On Water Reports: %u  || Teleport To Plane Reports: %u", waterwalk_reports, teleportplane_reports);
-        handler->PSendSysMessage("Teleport Reports: %u || Climb Reports: %u", teleport_reports, climb_reports);
-        handler->PSendSysMessage("Ignore Control Reports: %u || Ignore Z-Axis Reports: %u", ignorecontrol_reports, zaxis_reports);
+        handler->PSendSysMessage("Information about player {}", player->GetName().c_str());
+        handler->PSendSysMessage("Average: {} || Total Reports: {} ", average, total_reports);
+        handler->PSendSysMessage("Speed Reports: {} || Fly Reports: {} || Jump Reports: {} ", speed_reports, fly_reports, jump_reports);
+        handler->PSendSysMessage("Walk On Water Reports: {}  || Teleport To Plane Reports: {}", waterwalk_reports, teleportplane_reports);
+        handler->PSendSysMessage("Teleport Reports: {} || Climb Reports: {}", teleport_reports, climb_reports);
+        handler->PSendSysMessage("Ignore Control Reports: {} || Ignore Z-Axis Reports: {}", ignorecontrol_reports, zaxis_reports);
 
         return true;
     }
