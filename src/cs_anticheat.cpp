@@ -47,8 +47,8 @@ public:
             { "global",         SEC_GAMEMASTER,     false,   &HandleAntiCheatGlobalCommand,  "" },
             { "player",         SEC_GAMEMASTER,     false,   &HandleAntiCheatPlayerCommand,  "" },
             { "delete",         SEC_ADMINISTRATOR,  false,   &HandleAntiCheatDeleteCommand,  "" },
-            { "jail",           SEC_GAMEMASTER,     false,  &HandleAnticheatJailCommand,    "" },
-            { "parole",         SEC_ADMINISTRATOR,  false,  &HandleAnticheatParoleCommand,  "" },
+            { "jail",           SEC_GAMEMASTER,     false,   &HandleAnticheatJailCommand,    "" },
+            { "parole",         SEC_ADMINISTRATOR,  false,   &HandleAnticheatParoleCommand,  "" },
             { "purge",          SEC_ADMINISTRATOR,  false,   &HandleAntiCheatPurgeCommand,   "" },
             { "warn",           SEC_GAMEMASTER,     false,   &HandleAnticheatWarnCommand,    "" }
         };
