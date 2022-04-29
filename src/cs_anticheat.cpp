@@ -44,18 +44,18 @@ public:
     {
         static std::vector<ChatCommand> anticheatCommandTable =
         {
-            { "global",         SEC_GAMEMASTER,     true,   &HandleAntiCheatGlobalCommand,  "" },
-            { "player",         SEC_GAMEMASTER,     true,   &HandleAntiCheatPlayerCommand,  "" },
-            { "delete",         SEC_ADMINISTRATOR,  true,   &HandleAntiCheatDeleteCommand,  "" },
+            { "global",         SEC_GAMEMASTER,     false,   &HandleAntiCheatGlobalCommand,  "" },
+            { "player",         SEC_GAMEMASTER,     false,   &HandleAntiCheatPlayerCommand,  "" },
+            { "delete",         SEC_ADMINISTRATOR,  false,   &HandleAntiCheatDeleteCommand,  "" },
             { "jail",           SEC_GAMEMASTER,     false,  &HandleAnticheatJailCommand,    "" },
             { "parole",         SEC_ADMINISTRATOR,  false,  &HandleAnticheatParoleCommand,  "" },
-            { "purge",          SEC_ADMINISTRATOR,  true,   &HandleAntiCheatPurgeCommand,   "" },
-            { "warn",           SEC_GAMEMASTER,     true,   &HandleAnticheatWarnCommand,    "" }
+            { "purge",          SEC_ADMINISTRATOR,  false,   &HandleAntiCheatPurgeCommand,   "" },
+            { "warn",           SEC_GAMEMASTER,     false,   &HandleAnticheatWarnCommand,    "" }
         };
 
         static std::vector<ChatCommand> commandTable =
         {
-            { "anticheat",      SEC_GAMEMASTER,     true,   NULL, "",  anticheatCommandTable},
+            { "anticheat",      SEC_GAMEMASTER,     false,   NULL, "",  anticheatCommandTable},
         };
 
         return commandTable;

@@ -186,7 +186,9 @@ void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movem
 
     if (sConfigMgr->GetOption<bool>("Anticheat.IgnoreControlHack", true))
     {
-        if (player->HasUnitState(UNIT_STATE_ROOT) && !player->GetVehicle())
+        uint32 latency = 0;
+        latency = player->GetSession()->GetLatency() >= 400;
+        if (player->HasUnitState(UNIT_STATE_ROOT) && !player->GetVehicle() && !latency)
         {
             bool unrestricted = movementInfo.pos.GetPositionX() != x || movementInfo.pos.GetPositionY() != y;
             if (unrestricted)
