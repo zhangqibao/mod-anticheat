@@ -170,7 +170,6 @@ public:
         }
         sAnticheatMgr->AnticheatDeleteCommand(player->GetGUID());
         handler->PSendSysMessage("Anticheat Reports deleted for player %s", player->GetName().c_str());
-        sAnticheatMgr->AnticheatDeleteCommand(player->GetGUID());// deletes auto reports on player
         return true;
     }
 
