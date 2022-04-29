@@ -169,7 +169,7 @@ public:
             return false;
         }
         sAnticheatMgr->AnticheatDeleteCommand(player->GetGUID());
-        handler->PSendSysMessage("Anticheat Reports deleted for player %s", player->GetName().c_str());
+        handler->PSendSysMessage("Anticheat players_reports_status deleted for player %s", player->GetName().c_str());
         return true;
     }
 
