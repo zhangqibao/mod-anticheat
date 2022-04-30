@@ -178,7 +178,7 @@ public:
         if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
             return false;
 
-        ObjectGuid guid;
+        ObjectGuid guid = player->GetGUID();
 
         if (!player)
             player = PlayerIdentifier::FromTarget(handler);
