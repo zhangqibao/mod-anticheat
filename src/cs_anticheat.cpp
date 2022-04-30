@@ -181,8 +181,10 @@ public:
         ObjectGuid guid = player->GetGUID();
 
         if (!player)
+        {
             player = PlayerIdentifier::FromTarget(handler);
-        if (!player)
+        }
+        if (!player || !player->IsConnected())
         {
             handler->SendSysMessage(LANG_PLAYER_NOT_FOUND);
             handler->SetSentErrorMessage(true);
@@ -210,6 +212,7 @@ public:
         handler->PSendSysMessage("Teleport Reports: %u || Climb Reports: %u", teleport_reports, climb_reports);
         handler->PSendSysMessage("Ignore Control Reports: %u || Ignore Z-Axis Reports: %u", ignorecontrol_reports, zaxis_reports);
         return true;
+
     }
 
     static bool HandleAntiCheatGlobalCommand(ChatHandler* handler)
