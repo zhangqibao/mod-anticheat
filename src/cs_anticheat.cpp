@@ -47,7 +47,7 @@ public:
             { "global",         SEC_GAMEMASTER,     true,    &HandleAntiCheatGlobalCommand,  "" },
             { "player",         SEC_GAMEMASTER,     true,    &HandleAntiCheatPlayerCommand,  "" },
             { "delete",         SEC_ADMINISTRATOR,  true,    &HandleAntiCheatDeleteCommand,  "" },
-            { "jail",           SEC_GAMEMASTER,     false,   &HandleAnticheatJailCommand,    "" },
+            { "jail",           SEC_GAMEMASTER,     true,    &HandleAnticheatJailCommand,    "" },
             { "parole",         SEC_ADMINISTRATOR,  true,    &HandleAnticheatParoleCommand,  "" },
             { "purge",          SEC_ADMINISTRATOR,  true,    &HandleAntiCheatPurgeCommand,   "" },
             { "warn",           SEC_GAMEMASTER,     true,    &HandleAnticheatWarnCommand,    "" }
@@ -96,7 +96,10 @@ public:
         Player* pTarget = player->GetConnectedPlayer();
 
         // teleport both to jail.
-        handler->GetSession()->GetPlayer()->TeleportTo(1, 16226.5f, 16403.6f, -64.5f, 3.2f);
+        if (!handler->IsConsole())
+        {
+            handler->GetSession()->GetPlayer()->TeleportTo(1, 16226.5f, 16403.6f, -64.5f, 3.2f);
+        }
 
         WorldLocation loc = WorldLocation(1, 16226.5f, 16403.6f, -64.5f, 3.2f);// GM Jail Location
         pTarget->TeleportTo(loc);
