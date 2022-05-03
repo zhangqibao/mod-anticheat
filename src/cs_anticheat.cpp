@@ -181,8 +181,6 @@ public:
         if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
             return false;
 
-        ObjectGuid guid = player->GetGUID();
-
         if (!player)
         {
             player = PlayerIdentifier::FromTarget(handler);
@@ -194,28 +192,32 @@ public:
             return false;
         }
 
-        float average = sAnticheatMgr->GetAverage(guid);
-        uint32 total_reports = sAnticheatMgr->GetTotalReports(guid);
-        uint32 speed_reports = sAnticheatMgr->GetTypeReports(guid, 0);
-        uint32 fly_reports = sAnticheatMgr->GetTypeReports(guid, 1);
-        uint32 jump_reports = sAnticheatMgr->GetTypeReports(guid, 3);
-        uint32 waterwalk_reports = sAnticheatMgr->GetTypeReports(guid, 2);
-        uint32 teleportplane_reports = sAnticheatMgr->GetTypeReports(guid, 4);
-        uint32 climb_reports = sAnticheatMgr->GetTypeReports(guid, 5);
-        uint32 teleport_reports = sAnticheatMgr->GetTypeReports(guid, 6);
-        uint32 ignorecontrol_reports = sAnticheatMgr->GetTypeReports(guid, 7);
-        uint32 zaxis_reports = sAnticheatMgr->GetTypeReports(guid, 8);
+        ObjectGuid guid = player->GetGUID();
         Player* playerTarget = player->GetConnectedPlayer();
-        uint32 latency = 0;
-        latency = playerTarget->GetSession()->GetLatency();
-        handler->PSendSysMessage("Information about player %s || Latency %u ms", player->GetName().c_str(), latency);
-        handler->PSendSysMessage("Average: %f || Total Reports: %u ", average, total_reports);
-        handler->PSendSysMessage("Speed Reports: %u || Fly Reports: %u || Jump Reports: %u ", speed_reports, fly_reports, jump_reports);
-        handler->PSendSysMessage("Walk On Water Reports: %u  || Teleport To Plane Reports: %u", waterwalk_reports, teleportplane_reports);
-        handler->PSendSysMessage("Teleport Reports: %u || Climb Reports: %u", teleport_reports, climb_reports);
-        handler->PSendSysMessage("Ignore Control Reports: %u || Ignore Z-Axis Reports: %u", ignorecontrol_reports, zaxis_reports);
-        return true;
-
+        if (playerTarget)
+        {
+            float average = sAnticheatMgr->GetAverage(guid);
+            uint32 total_reports = sAnticheatMgr->GetTotalReports(guid);
+            uint32 speed_reports = sAnticheatMgr->GetTypeReports(guid, 0);
+            uint32 fly_reports = sAnticheatMgr->GetTypeReports(guid, 1);
+            uint32 jump_reports = sAnticheatMgr->GetTypeReports(guid, 3);
+            uint32 waterwalk_reports = sAnticheatMgr->GetTypeReports(guid, 2);
+            uint32 teleportplane_reports = sAnticheatMgr->GetTypeReports(guid, 4);
+            uint32 climb_reports = sAnticheatMgr->GetTypeReports(guid, 5);
+            uint32 teleport_reports = sAnticheatMgr->GetTypeReports(guid, 6);
+            uint32 ignorecontrol_reports = sAnticheatMgr->GetTypeReports(guid, 7);
+            uint32 zaxis_reports = sAnticheatMgr->GetTypeReports(guid, 8);
+            Player* playerTarget = player->GetConnectedPlayer();
+            uint32 latency = 0;
+            latency = playerTarget->GetSession()->GetLatency();
+            handler->PSendSysMessage("Information about player %s || Latency %u ms", player->GetName().c_str(), latency);
+            handler->PSendSysMessage("Average: %f || Total Reports: %u ", average, total_reports);
+            handler->PSendSysMessage("Speed Reports: %u || Fly Reports: %u || Jump Reports: %u ", speed_reports, fly_reports, jump_reports);
+            handler->PSendSysMessage("Walk On Water Reports: %u  || Teleport To Plane Reports: %u", waterwalk_reports, teleportplane_reports);
+            handler->PSendSysMessage("Teleport Reports: %u || Climb Reports: %u", teleport_reports, climb_reports);
+            handler->PSendSysMessage("Ignore Control Reports: %u || Ignore Z-Axis Reports: %u", ignorecontrol_reports, zaxis_reports);
+            return true;
+        }
     }
 
     static bool HandleAntiCheatGlobalCommand(ChatHandler* handler)
