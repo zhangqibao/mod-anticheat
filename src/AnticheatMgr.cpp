@@ -410,7 +410,7 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
     FlyHackDetection(player, movementInfo);
     JumpHackDetection(player, movementInfo, opcode);
     TeleportPlaneHackDetection(player, movementInfo);
-    ClimbHackDetection(player, movementInfo);
+    ClimbHackDetection(player, movementInfo, opcode);
     TeleportHackDetection(player, movementInfo);
     IgnoreControlHackDetection(player, movementInfo);
     if (player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK)
@@ -426,7 +426,7 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
 }
 
 // basic detection
-void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo)
+void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
 {
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectClimbHack", true))
         return;
@@ -435,6 +435,14 @@ void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo)
     if (player->IsInWater() ||
         player->IsFlying() ||
         player->IsFalling())
+        return;
+
+    // If the player jumped, we dont want to check for climb hack
+    // This can lead to false positives for climbing game objects legit
+    if (opcode == MSG_MOVE_JUMP)
+        return;
+
+    if (player->HasUnitMovementFlag(MOVEMENTFLAG_FALLING))
         return;
 
     Position playerPos = player->GetPosition();
