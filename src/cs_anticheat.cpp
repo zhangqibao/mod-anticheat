@@ -218,6 +218,10 @@ public:
             handler->PSendSysMessage("Ignore Control Reports: %u || Ignore Z-Axis Reports: %u", ignorecontrol_reports, zaxis_reports);
             return true;
         }
+        else
+        {
+            return false;
+        }
     }
 
     static bool HandleAntiCheatGlobalCommand(ChatHandler* handler)
