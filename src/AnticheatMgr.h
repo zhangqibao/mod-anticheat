@@ -36,7 +36,8 @@ enum ReportTypes
     CLIMB_HACK_REPORT = 5,
     TELEPORT_HACK_REPORT = 6,
     IGNORE_CONTROL_REPORT = 7,
-    ZAXIS_HACK_REPORT = 8
+    ZAXIS_HACK_REPORT = 8,
+    ANTISWIM_HACK_REPORT = 9
    // MAX_REPORT_TYPES
 };
 
@@ -76,6 +77,7 @@ class AnticheatMgr
         void JumpHackDetection(Player* player, MovementInfo movementInfo,uint32 opcode);
         void TeleportPlaneHackDetection(Player* player, MovementInfo);
         void ClimbHackDetection(Player* player,MovementInfo movementInfo, uint32 opcode);
+        void AntiSwimHackDetection(Player* player, MovementInfo movementInfo);
         void TeleportHackDetection(Player* player, MovementInfo movementInfo);
         void IgnoreControlHackDetection(Player* player, MovementInfo movementInfo);
         void ZAxisHackDetection(Player* player, MovementInfo movementInfo);
