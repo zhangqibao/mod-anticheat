@@ -20,8 +20,6 @@
 #include "Configuration/Config.h"
 #include "SpellAuras.h"
 
-#define CLIMB_ANGLE 1.87f
-
 #define LANG_ANTICHEAT_ALERT 30087
 #define LANG_ANTICHEAT_TELEPORT 30088
 #define LANG_ANTICHEAT_IGNORECONTROL 30089
