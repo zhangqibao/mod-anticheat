@@ -474,7 +474,7 @@ void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo,
 // basic detection
 void AnticheatMgr::AntiSwimHackDetection(Player* player, MovementInfo movementInfo)
 {
-    if (!sConfigMgr->GetOption<bool>("Anticheat.AntiSwimClimbHack", true))
+    if (!sConfigMgr->GetOption<bool>("Anticheat.AntiSwimHack", true))
         return;
 
     if (player->GetLiquidData().Status == LIQUID_MAP_UNDER_WATER && !movementInfo.HasMovementFlag(MOVEMENTFLAG_SWIMMING))

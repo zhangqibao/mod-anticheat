@@ -80,7 +80,7 @@ Anticheat.DetectClimbHack = 1
 Anticheat.DetectTelePortHack = 1
 Anticheat.IgnoreControlHack = 1
 Anticheat.DetectZaxisHack =1
-Anticheat.AntiSwimClimbHack = 1
+Anticheat.AntiSwimHack = 1
 
 #     Anticheat.StricterFlyHackCheck
 #       Description: Checks moveflag ascending (may give false positives)
