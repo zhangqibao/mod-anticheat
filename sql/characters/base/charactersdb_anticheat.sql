@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `daily_players_reports` (
   `ignorecontrol_reports` bigint unsigned NOT NULL DEFAULT 0,
   `zaxis_reports` bigint unsigned NOT NULL DEFAULT 0,
   `antiswim_reports` bigint unsigned NOT NULL DEFAULT 0,
+  `gravity_reports` bigint unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`guid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -33,5 +34,6 @@ CREATE TABLE IF NOT EXISTS `players_reports_status` (
   `ignorecontrol_reports` bigint unsigned NOT NULL DEFAULT 0,
   `zaxis_reports` bigint unsigned NOT NULL DEFAULT 0,
   `antiswim_reports` bigint unsigned NOT NULL DEFAULT 0,
+  `gravity_reports` bigint unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`guid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
