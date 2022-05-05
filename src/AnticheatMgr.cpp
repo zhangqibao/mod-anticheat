@@ -497,7 +497,7 @@ void AnticheatMgr::GravityHackDetection(Player* player, MovementInfo movementInf
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectGravityHack", true))
         return;
 
-    if (!player->HasUnitState(MOVEMENTFLAG_DISABLE_GRAVITY) && movementInfo.jump.zspeed < -10.0f)
+    if (!player->HasUnitMovementFlag(MOVEMENTFLAG_DISABLE_GRAVITY) && movementInfo.jump.zspeed < -10.0f)
     {
         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
         {
