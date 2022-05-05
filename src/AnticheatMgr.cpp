@@ -73,7 +73,7 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
     if (!distance2D)
         return;
 
-    if (player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK)
+    if (player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK && !player->IsFlying())
     {
         if (!m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_WATERWALKING) && !movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING))
         {
