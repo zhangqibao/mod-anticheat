@@ -478,6 +478,15 @@ void AnticheatMgr::AntiSwimHackDetection(Player* player, MovementInfo movementIn
     if (!sConfigMgr->GetOption<bool>("Anticheat.AntiSwimHack", true))
         return;
 
+    if (player->GetAreaId())
+    {
+        switch (player->GetAreaId())
+        {
+        case 2100: //Maraudon https://github.com/azerothcore/azerothcore-wotlk/issues/2437
+            return;
+        }
+    }
+
     if (player->GetLiquidData().Status == LIQUID_MAP_UNDER_WATER && !movementInfo.HasMovementFlag(MOVEMENTFLAG_SWIMMING))
     {
         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
