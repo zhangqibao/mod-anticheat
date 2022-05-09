@@ -153,18 +153,20 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
     BuildReport(player, FLY_HACK_REPORT);
 }
 
-void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movementInfo)
+void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
 {
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectTelePlaneHack", true))
         return;
 
     ObjectGuid key = player->GetGUID();
 
-    if (m_Players[key].GetLastMovementInfo().pos.GetPositionZ() != 0 ||
-        movementInfo.pos.GetPositionZ() != 0)
+    if (m_Players[key].GetLastOpcode() == MSG_MOVE_JUMP)
         return;
 
-    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING))
+    if (opcode == (MSG_MOVE_FALL_LAND))
+        return;
+
+    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_SWIMMING))
         return;
 
     float x, y, z;
@@ -409,7 +411,7 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
     SpeedHackDetection(player, movementInfo);
     FlyHackDetection(player, movementInfo);
     JumpHackDetection(player, movementInfo, opcode);
-    TeleportPlaneHackDetection(player, movementInfo);
+    TeleportPlaneHackDetection(player, movementInfo, opcode);
     ClimbHackDetection(player, movementInfo, opcode);
     TeleportHackDetection(player, movementInfo);
     IgnoreControlHackDetection(player, movementInfo);

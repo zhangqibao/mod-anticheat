@@ -76,7 +76,7 @@ class AnticheatMgr
         void FlyHackDetection(Player* player, MovementInfo movementInfo);
         void WalkOnWaterHackDetection(Player* player, MovementInfo movementInfo);
         void JumpHackDetection(Player* player, MovementInfo movementInfo,uint32 opcode);
-        void TeleportPlaneHackDetection(Player* player, MovementInfo);
+        void TeleportPlaneHackDetection(Player* player, MovementInfo, uint32 opcode);
         void ClimbHackDetection(Player* player,MovementInfo movementInfo, uint32 opcode);
         void AntiSwimHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
         void TeleportHackDetection(Player* player, MovementInfo movementInfo);
