@@ -158,6 +158,15 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectTelePlaneHack", true))
         return;
 
+    if (player->GetAreaId())
+    {
+        switch (player->GetAreaId())
+        {
+        case 2100: //Maraudon https://github.com/azerothcore/azerothcore-wotlk/issues/2437
+            return;
+        }
+    }
+
     ObjectGuid key = player->GetGUID();
 
     if (m_Players[key].GetLastOpcode() == MSG_MOVE_JUMP)
