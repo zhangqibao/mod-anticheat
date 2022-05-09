@@ -495,7 +495,7 @@ void AnticheatMgr::AntiSwimHackDetection(Player* player, MovementInfo movementIn
     if (opcode == MSG_MOVE_JUMP)
         return;
 
-    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING || MOVEMENTFLAG_SWIMMING))
+    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_SWIMMING))
         return;
 
     if (player->GetLiquidData().Status == LIQUID_MAP_UNDER_WATER && !movementInfo.HasMovementFlag(MOVEMENTFLAG_SWIMMING))
