@@ -169,6 +169,10 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
     if (movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_SWIMMING))
         return;
 
+    // If he is flying we dont need to check
+    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING))
+        return;
+
     float pos_z = player->GetPositionZ();
     float ground_Z = player->GetFloorZ();
     float z_diff = fabs(ground_Z - pos_z);
@@ -187,55 +191,65 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
     }
 }
 
-void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movementInfo)
+void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
 {
     float x, y;
     player->GetPosition(x, y);
     ObjectGuid key = player->GetGUID();
 
-    if (sConfigMgr->GetOption<bool>("Anticheat.IgnoreControlHack", true))
+    if (!sConfigMgr->GetOption<bool>("Anticheat.IgnoreControlHack", true))
+        return;
+
+    if (m_Players[key].GetLastOpcode() == MSG_MOVE_JUMP)
+        return;
+
+    if (opcode == (MSG_MOVE_FALL_LAND))
+        return;
+
+    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING | MOVEMENTFLAG_SWIMMING))
+        return;
+
+    uint32 latency = 0;
+    latency = player->GetSession()->GetLatency() >= 400;
+    if (player->HasUnitState(UNIT_STATE_ROOT) && !player->GetVehicle() && !latency)
     {
-        uint32 latency = 0;
-        latency = player->GetSession()->GetLatency() >= 400;
-        if (player->HasUnitState(UNIT_STATE_ROOT) && !player->GetVehicle() && !latency)
+        bool unrestricted = movementInfo.pos.GetPositionX() != x || movementInfo.pos.GetPositionY() != y;
+        if (unrestricted)
         {
-            bool unrestricted = movementInfo.pos.GetPositionX() != x || movementInfo.pos.GetPositionY() != y;
-            if (unrestricted)
+            if (m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForIngameWarnings", 70))
             {
-                if (m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForIngameWarnings", 70))
+                _alertFrequency = sConfigMgr->GetOption<uint32>("Anticheat.AlertFrequency", 5);
+                // So we dont divide by 0 by accident
+                if (_alertFrequency < 1)
+                    _alertFrequency = 1;
+                if (++_counter % _alertFrequency == 0)
                 {
-                    _alertFrequency = sConfigMgr->GetOption<uint32>("Anticheat.AlertFrequency", 5);
-                    // So we dont divide by 0 by accident
-                    if (_alertFrequency < 1)
-                        _alertFrequency = 1;
-                    if (++_counter % _alertFrequency == 0)
-                    {
-                        // display warning at the center of the screen, hacky way?
-                        std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Possible Ignore Control Hack Detected!";
-                        WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
-                        data << str;
-                        sWorld->SendGlobalGMMessage(&data);
-                        uint32 latency = 0;
-                        latency = player->GetSession()->GetLatency();
-                        // need better way to limit chat spam
-                        if (m_Players[key].GetTotalReports() >= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Min", 70) && m_Players[key].GetTotalReports() <= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Max", 80))
-                        {
-                            sWorld->SendGMText(LANG_ANTICHEAT_IGNORECONTROL, player->GetName().c_str(), latency);
-                        }
-                    _counter = 0;
-                    }
-                }
-                if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
-                {
+                    // display warning at the center of the screen, hacky way?
+                    std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Possible Ignore Control Hack Detected!";
+                    WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+                    data << str;
+                    sWorld->SendGlobalGMMessage(&data);
                     uint32 latency = 0;
                     latency = player->GetSession()->GetLatency();
-                    LOG_INFO("module", "AnticheatMgr:: Ignore Control - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                    // need better way to limit chat spam
+                    if (m_Players[key].GetTotalReports() >= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Min", 70) && m_Players[key].GetTotalReports() <= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Max", 80))
+                    {
+                        sWorld->SendGMText(LANG_ANTICHEAT_IGNORECONTROL, player->GetName().c_str(), latency);
+                    }
+                _counter = 0;
                 }
-
-                BuildReport(player, IGNORE_CONTROL_REPORT);
             }
+            if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+            {
+                uint32 latency = 0;
+                latency = player->GetSession()->GetLatency();
+                LOG_INFO("module", "AnticheatMgr:: Ignore Control - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            }
+
+            BuildReport(player, IGNORE_CONTROL_REPORT);
         }
     }
+
 }
 
 void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
@@ -413,7 +427,7 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
     TeleportPlaneHackDetection(player, movementInfo, opcode);
     ClimbHackDetection(player, movementInfo, opcode);
     TeleportHackDetection(player, movementInfo);
-    IgnoreControlHackDetection(player, movementInfo);
+    IgnoreControlHackDetection(player, movementInfo, opcode);
     GravityHackDetection(player, movementInfo);
     if (player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK)
     {
