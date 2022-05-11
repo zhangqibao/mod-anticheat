@@ -82,7 +82,7 @@ class AnticheatMgr
         void TeleportHackDetection(Player* player, MovementInfo movementInfo);
         void IgnoreControlHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
         void ZAxisHackDetection(Player* player, MovementInfo movementInfo);
-        void GravityHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
+        void GravityHackDetection(Player* player, MovementInfo movementInfo);
         void BuildReport(Player* player,uint16 reportType);
 
         bool MustCheckTempReports(uint8 type);

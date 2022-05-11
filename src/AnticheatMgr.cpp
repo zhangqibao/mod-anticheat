@@ -435,7 +435,7 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
     ClimbHackDetection(player, movementInfo, opcode);
     TeleportHackDetection(player, movementInfo);
     IgnoreControlHackDetection(player, movementInfo, opcode);
-    GravityHackDetection(player, movementInfo, opcode);
+    GravityHackDetection(player, movementInfo);
     if (player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK)
     {
         WalkOnWaterHackDetection(player, movementInfo);
@@ -534,7 +534,7 @@ void AnticheatMgr::AntiSwimHackDetection(Player* player, MovementInfo movementIn
     }
 }
 
-void AnticheatMgr::GravityHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
+void AnticheatMgr::GravityHackDetection(Player* player, MovementInfo movementInfo)
 {
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectGravityHack", true))
         return;
