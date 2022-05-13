@@ -274,7 +274,7 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
 
     // We want to exclude this LiquidStatus from detection because it leads to false positives on boats, docks etc.
     // Basically everytime you stand on a game object in water
-    if (player->GetLiquidData().Status == LIQUID_MAP_ABOVE_WATER && movementInfo.HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
+    if (player->GetLiquidData().Status == LIQUID_MAP_ABOVE_WATER)
         return;
 
     uint32 distance2D = (uint32)movementInfo.pos.GetExactDist2d(&m_Players[key].GetLastMovementInfo().pos);
