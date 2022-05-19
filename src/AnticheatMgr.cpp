@@ -722,6 +722,9 @@ bool AnticheatMgr::MustCheckTempReports(uint8 type)
     if (type == IGNORE_CONTROL_REPORT)
         return false;
 
+    if (type == GRAVITY_HACK_REPORT)
+        return false;
+
     return true;
 }
 
