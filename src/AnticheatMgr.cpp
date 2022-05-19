@@ -55,7 +55,7 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo /* movementInf
         uint32 latency = 0;
         latency = player->GetSession()->GetLatency();
         BuildReport(player, JUMP_HACK_REPORT);
-        LOG_INFO("module", "AnticheatMgr:: Jump-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+        LOG_INFO("anticheat.module", "AnticheatMgr:: Jump-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
     }
 }
 
@@ -81,7 +81,7 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
             }
             BuildReport(player, WALK_WATER_HACK_REPORT);
         }
@@ -113,7 +113,7 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo  moveme
     {
         uint32 latency = 0;
         latency = player->GetSession()->GetLatency();
-        LOG_INFO("module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+        LOG_INFO("anticheat.module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
     }
     BuildReport(player, WALK_WATER_HACK_REPORT);
 }
@@ -146,7 +146,7 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
     {
         uint32 latency = 0;
         latency = player->GetSession()->GetLatency();
-        LOG_INFO("module", "AnticheatMgr:: Fly-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+        LOG_INFO("anticheat.module", "AnticheatMgr:: Fly-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
     }
 
     BuildReport(player, FLY_HACK_REPORT);
@@ -197,7 +197,7 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
         {
             uint32 latency = 0;
             latency = player->GetSession()->GetLatency();
-            LOG_INFO("module", "AnticheatMgr:: Teleport To Plane - Hack detected player {} ({})  - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Teleport To Plane - Hack detected player {} ({})  - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
         }
 
         BuildReport(player, TELEPORT_PLANE_HACK_REPORT);
@@ -257,7 +257,7 @@ void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movem
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("module", "AnticheatMgr:: Ignore Control - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Ignore Control - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
             }
 
             BuildReport(player, IGNORE_CONTROL_REPORT);
@@ -325,7 +325,7 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
         {
             uint32 latency = 0;
             latency = player->GetSession()->GetLatency();
-            LOG_INFO("module", "AnticheatMgr:: Ignore Zaxis Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Ignore Zaxis Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
         }
  
         BuildReport(player, ZAXIS_HACK_REPORT);
@@ -370,8 +370,8 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
 
             if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
             {
-                LOG_INFO("module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), opponent->GetName(), latency);
-                LOG_INFO("module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms", opponent->GetName(), opponent->GetGUID().ToString(), player->GetName(), latency2);
+                LOG_INFO("anticheat.module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), opponent->GetName(), latency);
+                LOG_INFO("anticheat.module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms", opponent->GetName(), opponent->GetGUID().ToString(), player->GetName(), latency2);
             }
             BuildReport(player, TELEPORT_HACK_REPORT);
             BuildReport(opponent, TELEPORT_HACK_REPORT);
@@ -409,7 +409,7 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
         {
             uint32 latency = 0;
             latency = player->GetSession()->GetLatency();
-            LOG_INFO("module", "AnticheatMgr:: Teleport-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Teleport-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
         }
 
         BuildReport(player, TELEPORT_HACK_REPORT);
@@ -493,7 +493,7 @@ void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo,
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("module", "AnticheatMgr:: Climb-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Climb-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
             }
 
             BuildReport(player, CLIMB_HACK_REPORT);
@@ -533,7 +533,7 @@ void AnticheatMgr::AntiSwimHackDetection(Player* player, MovementInfo movementIn
         {
             uint32 latency = 0;
             latency = player->GetSession()->GetLatency();
-            LOG_INFO("module", "AnticheatMgr:: Anti-Swim-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Anti-Swim-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
         }
 
         BuildReport(player, ANTISWIM_HACK_REPORT);
@@ -558,7 +558,7 @@ void AnticheatMgr::GravityHackDetection(Player* player, MovementInfo movementInf
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("module", "AnticheatMgr:: Gravity-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Gravity-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
             }
             BuildReport(player, GRAVITY_HACK_REPORT);
         }
@@ -661,7 +661,7 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("module", "AnticheatMgr:: Speed-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Speed-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
             }
             BuildReport(player, SPEED_HACK_REPORT);
         }
@@ -818,7 +818,7 @@ void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
     {
         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
         {
-            LOG_INFO("module", "AnticheatMgr:: Reports reached assigned threshhold and counteracted by kicking player {} ({})", player->GetName(), player->GetGUID().ToString());
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Reports reached assigned threshhold and counteracted by kicking player {} ({})", player->GetName(), player->GetGUID().ToString());
         }
         // display warning at the center of the screen, hacky way?
         std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Auto Kicked for Reaching Cheat Threshhold!";
@@ -844,7 +844,7 @@ void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
     {
         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
         {
-            LOG_INFO("module", "AnticheatMgr:: Reports reached assigned threshhold and counteracted by banning player {} ({})", player->GetName(), player->GetGUID().ToString());
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Reports reached assigned threshhold and counteracted by banning player {} ({})", player->GetName(), player->GetGUID().ToString());
         }
         // display warning at the center of the screen, hacky way?
         std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Auto Banned Account for Reaching Cheat Threshhold!";
@@ -873,7 +873,7 @@ void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
     {
         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
         {
-            LOG_INFO("module", "AnticheatMgr:: Reports reached assigned threshhold and counteracted by jailing player {} ({})", player->GetName(), player->GetGUID().ToString());
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Reports reached assigned threshhold and counteracted by jailing player {} ({})", player->GetName(), player->GetGUID().ToString());
         }
         // display warning at the center of the screen, hacky way?
         std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Auto Jailed Account for Reaching Cheat Threshhold!";
