@@ -166,6 +166,10 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
     if (!distance2D)
         return;
 
+    //Celestial Planetarium Observer Battle has a narrow path that false flags
+    if (player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
+        return;
+
     if (player->HasAuraType(SPELL_AURA_WATER_WALK) || player->HasAuraType(SPELL_AURA_WATER_BREATHING) || player->HasAuraType(SPELL_AURA_GHOST))
         return;
 
@@ -280,6 +284,10 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
     // If the player is allowed to waterwalk (or he is dead because he automatically waterwalks then) we dont need to check any further
     // We also stop if the player is in water, because otherwise you get a false positive for swimming
     if (movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING) || player->IsInWater() || !player->IsAlive())
+        return;
+
+    //Celestial Planetarium Observer Battle has a narrow path that false flags
+    if (player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
         return;
 
     // We want to exclude this LiquidStatus from detection because it leads to false positives on boats, docks etc.
