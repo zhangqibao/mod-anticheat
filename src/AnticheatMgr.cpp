@@ -938,6 +938,11 @@ void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
 
 void AnticheatMgr::AnticheatGlobalCommand(ChatHandler* handler)
 {
+    // save All Anticheat Player Data before displaying global stats
+    for (SessionMap::const_iterator itr = sWorld->GetAllSessions().begin(); itr != sWorld->GetAllSessions().end(); ++itr)
+        if (Player* plr = itr->second->GetPlayer())
+            sAnticheatMgr->SavePlayerData(plr);
+
     QueryResult resultDB = CharacterDatabase.Query("SELECT guid,average,total_reports FROM players_reports_status WHERE total_reports != 0 ORDER BY average ASC LIMIT 3;");
     if (!resultDB)
     {
