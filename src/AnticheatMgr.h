@@ -68,7 +68,7 @@ class AnticheatMgr
 
         void StartHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
         void SavePlayerData(Player* player);
-
+        void SavePlayerDataDaily(Player* player);
         void HandlePlayerLogin(Player* player);
         void HandlePlayerLogout(Player* player);
 

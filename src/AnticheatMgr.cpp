@@ -716,6 +716,10 @@ void AnticheatMgr::SavePlayerData(Player* player)
     CharacterDatabase.Execute("REPLACE INTO players_reports_status (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleport_reports,ignorecontrol_reports,zaxis_reports,antiswim_reports,gravity_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), m_Players[player->GetGUID()].GetAverage(), m_Players[player->GetGUID()].GetTotalReports(), m_Players[player->GetGUID()].GetTypeReports(SPEED_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(FLY_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(JUMP_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(WALK_WATER_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(TELEPORT_PLANE_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(CLIMB_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(TELEPORT_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(IGNORE_CONTROL_REPORT), m_Players[player->GetGUID()].GetTypeReports(ZAXIS_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(ANTISWIM_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(GRAVITY_HACK_REPORT), m_Players[player->GetGUID()].GetCreationTime());
 }
 
+void AnticheatMgr::SavePlayerDataDaily(Player* player)
+{//                                                                 1     2          3             4           5            6                 7                     8             9             10                11                  12             13                14             15
+    CharacterDatabase.Execute("REPLACE INTO daily_players_reports (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleport_reports,ignorecontrol_reports,zaxis_reports,antiswim_reports,gravity_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), m_Players[player->GetGUID()].GetAverage(), m_Players[player->GetGUID()].GetTotalReports(), m_Players[player->GetGUID()].GetTypeReports(SPEED_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(FLY_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(JUMP_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(WALK_WATER_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(TELEPORT_PLANE_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(CLIMB_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(TELEPORT_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(IGNORE_CONTROL_REPORT), m_Players[player->GetGUID()].GetTypeReports(ZAXIS_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(ANTISWIM_HACK_REPORT), m_Players[player->GetGUID()].GetTypeReports(GRAVITY_HACK_REPORT), m_Players[player->GetGUID()].GetCreationTime());
+}
 uint32 AnticheatMgr::GetTotalReports(ObjectGuid guid)
 {
     return m_Players[guid].GetTotalReports();
@@ -941,7 +945,10 @@ void AnticheatMgr::AnticheatGlobalCommand(ChatHandler* handler)
     // save All Anticheat Player Data before displaying global stats
     for (SessionMap::const_iterator itr = sWorld->GetAllSessions().begin(); itr != sWorld->GetAllSessions().end(); ++itr)
         if (Player* plr = itr->second->GetPlayer())
+        {
             sAnticheatMgr->SavePlayerData(plr);
+            sAnticheatMgr->SavePlayerDataDaily(plr);
+        }
 
     QueryResult resultDB = CharacterDatabase.Query("SELECT guid,average,total_reports FROM players_reports_status WHERE total_reports != 0 ORDER BY average ASC LIMIT 3;");
     if (!resultDB)
