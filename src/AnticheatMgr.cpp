@@ -45,7 +45,6 @@ enum Spells
 
 AnticheatMgr::AnticheatMgr()
 {
-    uint32 _alertFrequency = 0;
 }
 
 AnticheatMgr::~AnticheatMgr()
@@ -174,7 +173,7 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
     if (player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
         return;
 
-    if (player->HasAuraType(SPELL_AURA_WATER_WALK) || player->HasAuraType(SPELL_AURA_WATER_BREATHING) || player->HasAuraType(SPELL_AURA_GHOST))
+    if (player && player->HasAuraType(SPELL_AURA_WATER_WALK) || player->HasAuraType(SPELL_AURA_WATER_BREATHING) || player->HasAuraType(SPELL_AURA_GHOST))
         return;
 
     ObjectGuid key = player->GetGUID();
@@ -303,7 +302,7 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
 
     // We want to exclude this LiquidStatus from detection because it leads to false positives on boats, docks etc.
     // Basically everytime you stand on a game object in water
-    if (player->GetLiquidData().Status == LIQUID_MAP_ABOVE_WATER)
+    if (player && player->GetLiquidData().Status == LIQUID_MAP_ABOVE_WATER)
         return;
 
     ObjectGuid key = player->GetGUID();
