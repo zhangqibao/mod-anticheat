@@ -96,7 +96,7 @@ class AnticheatMgr
 
         bool MustCheckTempReports(uint8 type);
         uint32 _counter = 0;
-        uint32 _alertFrequency;
+        uint32 _alertFrequency = 0;
         AnticheatPlayersDataMap m_Players;                        ///< Player data
 };
 
