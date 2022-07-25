@@ -45,6 +45,7 @@ enum Spells
 
 AnticheatMgr::AnticheatMgr()
 {
+    uint32 _alertFrequency = 0;
 }
 
 AnticheatMgr::~AnticheatMgr()
@@ -169,6 +170,13 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectTelePlaneHack", true))
         return;
 
+    //Celestial Planetarium Observer Battle has a narrow path that false flags
+    if (player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
+        return;
+
+    if (player->HasAuraType(SPELL_AURA_WATER_WALK) || player->HasAuraType(SPELL_AURA_WATER_BREATHING) || player->HasAuraType(SPELL_AURA_GHOST))
+        return;
+
     ObjectGuid key = player->GetGUID();
 
     uint32 distance2D = (uint32)movementInfo.pos.GetExactDist2d(&m_Players[key].GetLastMovementInfo().pos);
@@ -176,13 +184,6 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
     // We don't need to check for a water walking hack if the player hasn't moved
     // This is necessary since MovementHandler fires if you rotate the camera in place
     if (!distance2D)
-        return;
-
-    //Celestial Planetarium Observer Battle has a narrow path that false flags
-    if (player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
-        return;
-
-    if (player->HasAuraType(SPELL_AURA_WATER_WALK) || player->HasAuraType(SPELL_AURA_WATER_BREATHING) || player->HasAuraType(SPELL_AURA_GHOST))
         return;
 
     if (m_Players[key].GetLastOpcode() == MSG_MOVE_JUMP)
@@ -287,8 +288,6 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectZaxisHack", true))
         return;
 
-    ObjectGuid key = player->GetGUID();
-
     // If he is flying we dont need to check
     if (movementInfo.HasMovementFlag(MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING))
         return;
@@ -306,6 +305,8 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
     // Basically everytime you stand on a game object in water
     if (player->GetLiquidData().Status == LIQUID_MAP_ABOVE_WATER)
         return;
+
+    ObjectGuid key = player->GetGUID();
 
     uint32 distance2D = (uint32)movementInfo.pos.GetExactDist2d(&m_Players[key].GetLastMovementInfo().pos);
 
