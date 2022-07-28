@@ -60,7 +60,7 @@ class AnticheatMgr
     ~AnticheatMgr();
 
     public:
-    static AnticheatMgr* instance()
+        static AnticheatMgr* instance()
         {
            static AnticheatMgr* instance = new AnticheatMgr();
            return instance;
@@ -83,17 +83,17 @@ class AnticheatMgr
     private:
         void SpeedHackDetection(Player* player, MovementInfo movementInfo);
         void FlyHackDetection(Player* player, MovementInfo movementInfo);
-        void WalkOnWaterHackDetection(Player* player, MovementInfo movementInfo);
-        void JumpHackDetection(Player* player, MovementInfo movementInfo,uint32 opcode);
+        void JumpHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
         void TeleportPlaneHackDetection(Player* player, MovementInfo, uint32 opcode);
-        void ClimbHackDetection(Player* player,MovementInfo movementInfo, uint32 opcode);
-        void AntiSwimHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
+        void ClimbHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
         void TeleportHackDetection(Player* player, MovementInfo movementInfo);
         void IgnoreControlHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
-        void ZAxisHackDetection(Player* player, MovementInfo movementInfo);
         void GravityHackDetection(Player* player, MovementInfo movementInfo);
-        void BuildReport(Player* player,uint16 reportType);
+        void WalkOnWaterHackDetection(Player* player, MovementInfo movementInfo);
+        void ZAxisHackDetection(Player* player, MovementInfo movementInfo);
+        void AntiSwimHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
 
+        void BuildReport(Player* player,uint16 reportType);
         bool MustCheckTempReports(uint8 type);
         uint32 _counter = 0;
         uint32 _alertFrequency = 0;
