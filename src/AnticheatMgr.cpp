@@ -769,6 +769,7 @@ bool AnticheatMgr::MustCheckTempReports(uint8 type)
 
 void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
 {
+    OnReport(player, reportType);
     ObjectGuid key = player->GetGUID();
 
     if (MustCheckTempReports(reportType))

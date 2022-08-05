@@ -31,6 +31,7 @@
 #include "AnticheatData.h"
 #include "Chat.h"
 #include "ObjectGuid.h"
+#include "EventEmitter.h"
 
 class Player;
 class AnticheatData;
@@ -65,6 +66,8 @@ class AnticheatMgr
            static AnticheatMgr* instance = new AnticheatMgr();
            return instance;
         }
+
+        EventEmitter<void(Player*, uint16)> OnReport;
 
         void StartHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
         void SavePlayerData(Player* player);
