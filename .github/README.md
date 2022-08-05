@@ -14,7 +14,7 @@ https://github.com/azerothcore/mod-anticheat/wiki
 
 ## Notice
 
-Requires revision [eb91bbf](https://github.com/azerothcore/azerothcore-wotlk/commit/eb91bbfc5627ca3d410cdef5a08e7baf23f6452f) or newer.
+Requires revision [9aed486](https://github.com/azerothcore/azerothcore-wotlk/commit/9aed486eeb95b38b18ad47e3c8634b5832943ad8) or newer.
 
 ## How to install
 
