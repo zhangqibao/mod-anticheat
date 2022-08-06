@@ -693,6 +693,9 @@ void AnticheatMgr::AntiSwimHackDetection(Player* player, MovementInfo movementIn
 // basic detection
 void AnticheatMgr::AntiKnockBackHactDetection(Player* player, MovementInfo movementInfo)
 {
+    if (!sConfigMgr->GetOption<bool>("Anticheat.AntiKnockBack", true))
+        return;
+
     ObjectGuid key = player->GetGUID();
 
     //if a knockback helper is not passed then we ignore
