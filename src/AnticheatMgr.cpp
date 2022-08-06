@@ -366,12 +366,16 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
     float lastY = m_Players[key].GetLastMovementInfo().pos.GetPositionY();
     float newY = movementInfo.pos.GetPositionY();
 
+    float lastZ = m_Players[key].GetLastMovementInfo().pos.GetPositionZ();
+    float newZ = movementInfo.pos.GetPositionZ();
+
     float xDiff = fabs(lastX - newX);
     float yDiff = fabs(lastY - newY);
+    float zDiff = fabs(lastZ - newZ);
 
     if (player->duel)
     {
-        if ((xDiff >= 50.0f || yDiff >= 50.0f) && !player->CanTeleport())
+        if ((xDiff >= 50.0f || yDiff >= 50.0f || zDiff >= 10.0f) && !player->CanTeleport())
         {
             Player* opponent = player->duel->Opponent;
 
@@ -397,7 +401,7 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
             player->SetCanTeleport(false);
     }
 
-    if ((xDiff >= 50.0f || yDiff >= 50.0f) && !player->CanTeleport())
+    if ((xDiff >= 50.0f || yDiff >= 50.0f || zDiff >= 10.0f) && !player->CanTeleport())
     {
         if (m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForIngameWarnings", 70))
         {
