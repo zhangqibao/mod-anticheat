@@ -441,9 +441,13 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
 
 void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
 {
-    float x, y;
-    player->GetPosition(x, y);
     ObjectGuid key = player->GetGUID();
+
+    float lastX = m_Players[key].GetLastMovementInfo().pos.GetPositionX();
+    float newX = movementInfo.pos.GetPositionX();
+
+    float lastY = m_Players[key].GetLastMovementInfo().pos.GetPositionY();
+    float newY = movementInfo.pos.GetPositionY();
 
     if (!sConfigMgr->GetOption<bool>("Anticheat.IgnoreControlHack", true))
         return;
@@ -461,7 +465,7 @@ void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movem
     latency = player->GetSession()->GetLatency() >= 400;
     if (player->HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED) && !player->GetVehicle() && !latency)
     {
-        bool unrestricted = movementInfo.pos.GetPositionX() != x || movementInfo.pos.GetPositionY() != y;
+        bool unrestricted = newX != lastX || newY != lastY;
         if (unrestricted)
         {
             if (m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForIngameWarnings", 70))
