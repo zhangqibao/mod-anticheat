@@ -740,7 +740,7 @@ void AnticheatMgr::NoFallDamageDetection(Player* player, MovementInfo movementIn
         return;
 
     // players with water walk aura jumping on to the water from ledge would not get damage and neither will safe fall and feather fall
-    if (player->HasAuraType(SPELL_AURA_WATER_WALK) && player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK && !player->IsFlying() ||
+    if ((player->HasAuraType(SPELL_AURA_WATER_WALK) && player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK) && !player->IsFlying() ||
         player->HasAuraType(SPELL_AURA_FEATHER_FALL) || player->HasAuraType(SPELL_AURA_SAFE_FALL))
     {
         return;
