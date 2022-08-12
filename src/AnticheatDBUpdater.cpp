@@ -45,22 +45,31 @@ public:
     {
         LOG_INFO("sql.sql", "Loading anticheat updates...");
 
-        std::vector<std::string> loginDatabaseDirectories = GetDatabaseDirectories("auth");
-        if (!loginDatabaseDirectories.empty())
+        if (DBUpdater<LoginDatabaseConnection>::IsEnabled(updateFlags))
         {
-            DBUpdater<LoginDatabaseConnection>::Update(LoginDatabase, &loginDatabaseDirectories);
+            std::vector<std::string> loginDatabaseDirectories = GetDatabaseDirectories("auth");
+            if (!loginDatabaseDirectories.empty())
+            {
+                DBUpdater<LoginDatabaseConnection>::Update(LoginDatabase, &loginDatabaseDirectories);
+            }
         }
 
-        std::vector<std::string> charactersDatabaseDirectories = GetDatabaseDirectories("characters");
-        if (!charactersDatabaseDirectories.empty())
+        if (DBUpdater<CharacterDatabaseConnection>::IsEnabled(updateFlags))
         {
-            DBUpdater<CharacterDatabaseConnection>::Update(CharacterDatabase, &charactersDatabaseDirectories);
+            std::vector<std::string> charactersDatabaseDirectories = GetDatabaseDirectories("characters");
+            if (!charactersDatabaseDirectories.empty())
+            {
+                DBUpdater<CharacterDatabaseConnection>::Update(CharacterDatabase, &charactersDatabaseDirectories);
+            }
         }
 
-        std::vector<std::string> worldDatabaseDirectories = GetDatabaseDirectories("world");
-        if (!worldDatabaseDirectories.empty())
+        if (DBUpdater<WorldDatabaseConnection>::IsEnabled(updateFlags))
         {
-            DBUpdater<WorldDatabaseConnection>::Update(WorldDatabase, &worldDatabaseDirectories);
+            std::vector<std::string> worldDatabaseDirectories = GetDatabaseDirectories("world");
+            if (!worldDatabaseDirectories.empty())
+            {
+                DBUpdater<WorldDatabaseConnection>::Update(WorldDatabase, &worldDatabaseDirectories);
+            }
         }
     }
 };
