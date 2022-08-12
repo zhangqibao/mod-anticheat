@@ -467,7 +467,7 @@ void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movem
 
     uint32 latency = 0;
     latency = player->GetSession()->GetLatency() >= 400;
-    if (player->HasUnitState(UNIT_STATE_ROOT | UNIT_STATE_STUNNED) && !player->GetVehicle() && !latency)
+    if ((player->HasAuraType(SPELL_AURA_MOD_STUN) || player->HasAuraType(SPELL_AURA_MOD_ROOT)) && !player->GetVehicle() && !latency)
     {
         bool unrestricted = newX != lastX || newY != lastY;
         if (unrestricted)
