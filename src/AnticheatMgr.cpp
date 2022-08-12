@@ -89,7 +89,8 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
     {
         AntiSwimHackDetection(player, movementInfo, opcode);
     }
-    AntiKnockBackHactDetection(player, movementInfo);
+    AntiKnockBackHackDetection(player, movementInfo);
+    NoFallDamageDetection(player, movementInfo);
     m_Players[key].SetLastMovementInfo(movementInfo);
     m_Players[key].SetLastOpcode(opcode);
 }
@@ -702,7 +703,7 @@ void AnticheatMgr::AntiSwimHackDetection(Player* player, MovementInfo movementIn
 }
 
 // basic detection
-void AnticheatMgr::AntiKnockBackHactDetection(Player* player, MovementInfo movementInfo)
+void AnticheatMgr::AntiKnockBackHackDetection(Player* player, MovementInfo movementInfo)
 {
     if (!sConfigMgr->GetOption<bool>("Anticheat.AntiKnockBack", true))
         return;
@@ -726,6 +727,52 @@ void AnticheatMgr::AntiKnockBackHactDetection(Player* player, MovementInfo movem
     }
     else if (player->CanKnockback())
         player->SetCanKnockback(false);
+}
+
+// basic detection
+void AnticheatMgr::NoFallDamageDetection(Player* player, MovementInfo movementInfo)
+{
+    if (!sConfigMgr->GetOption<bool>("Anticheat.NoFallDamage", true))
+        return;
+
+    // ghost can not get damaged
+    if (player->HasAuraType(SPELL_AURA_GHOST))
+        return;
+
+    // players with water walk aura jumping on to the water from ledge would not get damage and neither will safe fall and feather fall
+    if (player->HasAuraType(SPELL_AURA_WATER_WALK) && player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK && !player->IsFlying() ||
+        player->HasAuraType(SPELL_AURA_FEATHER_FALL) || player->HasAuraType(SPELL_AURA_SAFE_FALL))
+    {
+        return;
+    }
+
+    ObjectGuid key = player->GetGUID();
+
+    float lastZ = m_Players[key].GetLastMovementInfo().pos.GetPositionZ();
+    float newZ = movementInfo.pos.GetPositionZ();
+    float zDiff = fabs(lastZ - newZ);
+    int32 safe_fall = player->GetTotalAuraModifier(SPELL_AURA_SAFE_FALL);
+    float damageperc = 0.018f * (zDiff - safe_fall) - 0.2426f;
+    uint32 damage = (uint32)(damageperc * player->GetMaxHealth() * sWorld->getRate(RATE_DAMAGE_FALL));
+
+    // in the Player::Handlefall 14.57f is used to calculated the damageperc formula below to 0 for fall damamge
+
+    if (movementInfo.pos.GetPositionZ() < m_Players[key].GetLastMovementInfo().pos.GetPositionZ() && zDiff > 14.57f)
+    {
+        if (movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING) || m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_FALLING))
+        {
+            if (damage == 0 && !player->IsImmunedToDamageOrSchool(SPELL_SCHOOL_MASK_NORMAL))
+            {
+                if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+                {
+                    uint32 latency = 0;
+                    latency = player->GetSession()->GetLatency();
+                    LOG_INFO("anticheat.module", "AnticheatMgr:: No Fall Damage - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                }
+                BuildReport(player, NO_FALL_DAMAGE_HACK_REPORT);
+            }
+        }
+    }
 }
 
 void AnticheatMgr::HandlePlayerLogin(Player* player)
@@ -753,15 +800,15 @@ void AnticheatMgr::HandlePlayerLogout(Player* player)
 void AnticheatMgr::SavePlayerData(Player* player)
 {
     AnticheatData playerData = m_Players[player->GetGUID()];
-    //                                                               1       2         3            4           5            6                 7                     8             9               10              11                   12           13              14               15                     16
-    CharacterDatabase.Execute("REPLACE INTO players_reports_status (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleport_reports,ignorecontrol_reports,zaxis_reports,antiswim_reports,gravity_reports,antiknockback_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), playerData.GetAverage(), playerData.GetTotalReports(), playerData.GetTypeReports(SPEED_HACK_REPORT), playerData.GetTypeReports(FLY_HACK_REPORT), playerData.GetTypeReports(JUMP_HACK_REPORT), playerData.GetTypeReports(WALK_WATER_HACK_REPORT), playerData.GetTypeReports(TELEPORT_PLANE_HACK_REPORT), playerData.GetTypeReports(CLIMB_HACK_REPORT), playerData.GetTypeReports(TELEPORT_HACK_REPORT), playerData.GetTypeReports(IGNORE_CONTROL_REPORT), playerData.GetTypeReports(ZAXIS_HACK_REPORT), playerData.GetTypeReports(ANTISWIM_HACK_REPORT), playerData.GetTypeReports(GRAVITY_HACK_REPORT), playerData.GetTypeReports(ANTIKNOCK_BACK_HACK_REPORT), playerData.GetCreationTime());
+    //                                                               1       2         3            4           5            6                 7                     8             9               10              11                   12           13              14               15                     16                   17
+    CharacterDatabase.Execute("REPLACE INTO players_reports_status (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleport_reports,ignorecontrol_reports,zaxis_reports,antiswim_reports,gravity_reports,antiknockback_reports,no_fall_damage_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), playerData.GetAverage(), playerData.GetTotalReports(), playerData.GetTypeReports(SPEED_HACK_REPORT), playerData.GetTypeReports(FLY_HACK_REPORT), playerData.GetTypeReports(JUMP_HACK_REPORT), playerData.GetTypeReports(WALK_WATER_HACK_REPORT), playerData.GetTypeReports(TELEPORT_PLANE_HACK_REPORT), playerData.GetTypeReports(CLIMB_HACK_REPORT), playerData.GetTypeReports(TELEPORT_HACK_REPORT), playerData.GetTypeReports(IGNORE_CONTROL_REPORT), playerData.GetTypeReports(ZAXIS_HACK_REPORT), playerData.GetTypeReports(ANTISWIM_HACK_REPORT), playerData.GetTypeReports(GRAVITY_HACK_REPORT), playerData.GetTypeReports(ANTIKNOCK_BACK_HACK_REPORT), playerData.GetTypeReports(NO_FALL_DAMAGE_HACK_REPORT), playerData.GetCreationTime());
 }
 
 void AnticheatMgr::SavePlayerDataDaily(Player* player)
 {
     AnticheatData playerData = m_Players[player->GetGUID()];
-    //                                                              1     2          3             4           5            6                 7                     8             9             10                11                  12             13                14             15                     16
-    CharacterDatabase.Execute("REPLACE INTO daily_players_reports (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleport_reports,ignorecontrol_reports,zaxis_reports,antiswim_reports,gravity_reports,antiknockback_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), playerData.GetAverage(), playerData.GetTotalReports(), playerData.GetTypeReports(SPEED_HACK_REPORT), playerData.GetTypeReports(FLY_HACK_REPORT), playerData.GetTypeReports(JUMP_HACK_REPORT), playerData.GetTypeReports(WALK_WATER_HACK_REPORT), playerData.GetTypeReports(TELEPORT_PLANE_HACK_REPORT), playerData.GetTypeReports(CLIMB_HACK_REPORT), playerData.GetTypeReports(TELEPORT_HACK_REPORT), playerData.GetTypeReports(IGNORE_CONTROL_REPORT), playerData.GetTypeReports(ZAXIS_HACK_REPORT), playerData.GetTypeReports(ANTISWIM_HACK_REPORT), playerData.GetTypeReports(GRAVITY_HACK_REPORT), playerData.GetTypeReports(ANTIKNOCK_BACK_HACK_REPORT), playerData.GetCreationTime());
+    //                                                              1     2          3             4           5            6                 7                     8             9             10                11                  12             13                14             15                     16                   17
+    CharacterDatabase.Execute("REPLACE INTO daily_players_reports (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleport_reports,ignorecontrol_reports,zaxis_reports,antiswim_reports,gravity_reports,antiknockback_reports,no_fall_damage_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), playerData.GetAverage(), playerData.GetTotalReports(), playerData.GetTypeReports(SPEED_HACK_REPORT), playerData.GetTypeReports(FLY_HACK_REPORT), playerData.GetTypeReports(JUMP_HACK_REPORT), playerData.GetTypeReports(WALK_WATER_HACK_REPORT), playerData.GetTypeReports(TELEPORT_PLANE_HACK_REPORT), playerData.GetTypeReports(CLIMB_HACK_REPORT), playerData.GetTypeReports(TELEPORT_HACK_REPORT), playerData.GetTypeReports(IGNORE_CONTROL_REPORT), playerData.GetTypeReports(ZAXIS_HACK_REPORT), playerData.GetTypeReports(ANTISWIM_HACK_REPORT), playerData.GetTypeReports(GRAVITY_HACK_REPORT), playerData.GetTypeReports(ANTIKNOCK_BACK_HACK_REPORT), playerData.GetTypeReports(NO_FALL_DAMAGE_HACK_REPORT), playerData.GetCreationTime());
 }
 uint32 AnticheatMgr::GetTotalReports(ObjectGuid guid)
 {
@@ -793,6 +840,9 @@ bool AnticheatMgr::MustCheckTempReports(uint8 type)
         return false;
 
     if (type == ANTIKNOCK_BACK_HACK_REPORT)
+        return false;
+
+    if (type == NO_FALL_DAMAGE_HACK_REPORT)
         return false;
 
     return true;
@@ -860,8 +910,8 @@ void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
         if (!m_Players[key].GetDailyReportState())
         {
             AnticheatData playerData = m_Players[player->GetGUID()];
-            //                                                              1     2          3             4           5            6                 7                     8             9             10                11                  12             13                14             15                    16
-            CharacterDatabase.Execute("REPLACE INTO daily_players_reports (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleport_reports,ignorecontrol_reports,zaxis_reports,antiswim_reports,gravity_reports,antiknockback_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), playerData.GetAverage(), playerData.GetTotalReports(), playerData.GetTypeReports(SPEED_HACK_REPORT), playerData.GetTypeReports(FLY_HACK_REPORT), playerData.GetTypeReports(JUMP_HACK_REPORT), playerData.GetTypeReports(WALK_WATER_HACK_REPORT), playerData.GetTypeReports(TELEPORT_PLANE_HACK_REPORT), playerData.GetTypeReports(CLIMB_HACK_REPORT), playerData.GetTypeReports(TELEPORT_HACK_REPORT), playerData.GetTypeReports(IGNORE_CONTROL_REPORT), playerData.GetTypeReports(ZAXIS_HACK_REPORT), playerData.GetTypeReports(ANTISWIM_HACK_REPORT), playerData.GetTypeReports(GRAVITY_HACK_REPORT), playerData.GetTypeReports(ANTIKNOCK_BACK_HACK_REPORT), playerData.GetCreationTime());
+            //                                                              1     2          3             4           5            6                 7                     8             9             10                11                  12             13                14             15                    16                  17
+            CharacterDatabase.Execute("REPLACE INTO daily_players_reports (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleport_reports,ignorecontrol_reports,zaxis_reports,antiswim_reports,gravity_reports,antiknockback_reports,no_fall_damage_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), playerData.GetAverage(), playerData.GetTotalReports(), playerData.GetTypeReports(SPEED_HACK_REPORT), playerData.GetTypeReports(FLY_HACK_REPORT), playerData.GetTypeReports(JUMP_HACK_REPORT), playerData.GetTypeReports(WALK_WATER_HACK_REPORT), playerData.GetTypeReports(TELEPORT_PLANE_HACK_REPORT), playerData.GetTypeReports(CLIMB_HACK_REPORT), playerData.GetTypeReports(TELEPORT_HACK_REPORT), playerData.GetTypeReports(IGNORE_CONTROL_REPORT), playerData.GetTypeReports(ZAXIS_HACK_REPORT), playerData.GetTypeReports(ANTISWIM_HACK_REPORT), playerData.GetTypeReports(GRAVITY_HACK_REPORT), playerData.GetTypeReports(ANTIKNOCK_BACK_HACK_REPORT), playerData.GetTypeReports(NO_FALL_DAMAGE_HACK_REPORT), playerData.GetCreationTime());
             m_Players[key].SetDailyReportState(true);
         }
     }

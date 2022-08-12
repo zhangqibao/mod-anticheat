@@ -27,7 +27,7 @@
 
 #include "AnticheatMgr.h"
 
-#define MAX_REPORT_TYPES 12
+#define MAX_REPORT_TYPES 13
 
 class AnticheatData
 {

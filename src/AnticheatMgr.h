@@ -49,7 +49,8 @@ enum ReportTypes
     ZAXIS_HACK_REPORT = 8,
     ANTISWIM_HACK_REPORT = 9,
     GRAVITY_HACK_REPORT = 10,
-    ANTIKNOCK_BACK_HACK_REPORT = 11
+    ANTIKNOCK_BACK_HACK_REPORT = 11,
+    NO_FALL_DAMAGE_HACK_REPORT = 12
    // MAX_REPORT_TYPES
 };
 
@@ -97,7 +98,8 @@ class AnticheatMgr
         void WalkOnWaterHackDetection(Player* player, MovementInfo movementInfo);
         void ZAxisHackDetection(Player* player, MovementInfo movementInfo);
         void AntiSwimHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
-        void AntiKnockBackHactDetection(Player* player, MovementInfo movementInfo);
+        void AntiKnockBackHackDetection(Player* player, MovementInfo movementInfo);
+        void NoFallDamageDetection(Player* player, MovementInfo movementInfo);
         void BuildReport(Player* player,uint16 reportType);
         bool MustCheckTempReports(uint8 type);
         uint32 _counter = 0;
