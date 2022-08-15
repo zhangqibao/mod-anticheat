@@ -96,7 +96,7 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
     {
         if (bg->GetStatus() == STATUS_WAIT_JOIN)
         {
-            BGStartExploit(player, movementInfo, opcode);
+            BGStartExploit(player, movementInfo);
         }
     }
     m_Players[key].SetLastMovementInfo(movementInfo);
@@ -783,7 +783,7 @@ void AnticheatMgr::NoFallDamageDetection(Player* player, MovementInfo movementIn
     }
 }
 
-void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo, uint32 opcode)
+void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
 {
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectBGStartHack", true))
         return;
