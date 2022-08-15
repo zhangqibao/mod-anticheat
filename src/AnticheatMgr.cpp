@@ -902,7 +902,6 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo, uin
                 BuildReport(player, TELEPORT_HACK_REPORT);
             }
 
-
             if (Battleground* bg = player->GetBattleground())
             {
                 if (bg->GetStatus() == STATUS_WAIT_JOIN)
