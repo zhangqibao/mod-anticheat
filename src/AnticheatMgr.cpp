@@ -879,7 +879,7 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo, uin
                 if (++_counter % _alertFrequency == 0)
                 {
                     // display warning at the center of the screen, hacky way?
-                    std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Player Outside of Starting SPOT before BG AV has started!";
+                    std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Player Outside of Starting SPOT before BG WG has started!";
                     WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
                     data << str;
                     sWorld->SendGlobalGMMessage(&data);
@@ -897,7 +897,7 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo, uin
                 {
                     uint32 latency = 0;
                     latency = player->GetSession()->GetLatency();
-                    LOG_INFO("anticheat.module", "AnticheatMgr:: BG AV Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                    LOG_INFO("anticheat.module", "AnticheatMgr:: BG WG Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
                 }
                 BuildReport(player, TELEPORT_HACK_REPORT);
             }
@@ -1126,7 +1126,7 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo, uin
             }
             break;
         }
-        case 628: // IOC
+        case 628: // Island Of Conquest
         {
             if (Battleground* bg = player->GetBattleground())
             {
