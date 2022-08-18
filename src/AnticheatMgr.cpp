@@ -35,6 +35,9 @@ constexpr auto LANG_ANTICHEAT_IGNORECONTROL = 30089;
 constexpr auto LANG_ANTICHEAT_DUEL = 30090;
 constexpr auto LANG_ANTICHEAT_BG_EXPLOIT = 30091;
 
+// Time between server sends acknowledgement, and client is actually acknowledged
+constexpr auto ALLOWED_ACK_LAG = 2000;
+
 enum Spells
 {
     SHACKLES = 38505,
@@ -46,6 +49,29 @@ enum Spells
 
 AnticheatMgr::AnticheatMgr()
 {
+    _opackorders =
+    {
+        { SMSG_FORCE_WALK_SPEED_CHANGE, CMSG_FORCE_WALK_SPEED_CHANGE_ACK },
+        { SMSG_FORCE_RUN_SPEED_CHANGE, CMSG_FORCE_RUN_SPEED_CHANGE_ACK },
+        { SMSG_FORCE_RUN_BACK_SPEED_CHANGE, CMSG_FORCE_RUN_BACK_SPEED_CHANGE_ACK },
+        { SMSG_FORCE_SWIM_SPEED_CHANGE, CMSG_FORCE_SWIM_SPEED_CHANGE_ACK },
+        { SMSG_FORCE_SWIM_BACK_SPEED_CHANGE, CMSG_FORCE_SWIM_BACK_SPEED_CHANGE_ACK },
+        { SMSG_FORCE_TURN_RATE_CHANGE, CMSG_FORCE_TURN_RATE_CHANGE_ACK },
+        { SMSG_FORCE_PITCH_RATE_CHANGE, CMSG_FORCE_PITCH_RATE_CHANGE_ACK },
+        { SMSG_FORCE_FLIGHT_SPEED_CHANGE, CMSG_FORCE_FLIGHT_SPEED_CHANGE_ACK },
+        { SMSG_FORCE_FLIGHT_BACK_SPEED_CHANGE, CMSG_FORCE_FLIGHT_BACK_SPEED_CHANGE_ACK },
+        { SMSG_FORCE_MOVE_ROOT, CMSG_FORCE_MOVE_ROOT_ACK },
+        { SMSG_FORCE_MOVE_UNROOT, CMSG_FORCE_MOVE_UNROOT_ACK },
+        { SMSG_MOVE_KNOCK_BACK, CMSG_MOVE_KNOCK_BACK_ACK },
+        { SMSG_MOVE_FEATHER_FALL, SMSG_MOVE_NORMAL_FALL, CMSG_MOVE_FEATHER_FALL_ACK },
+        { SMSG_MOVE_SET_HOVER, SMSG_MOVE_UNSET_HOVER, CMSG_MOVE_HOVER_ACK },
+        { SMSG_MOVE_SET_CAN_FLY, SMSG_MOVE_UNSET_CAN_FLY, CMSG_MOVE_SET_CAN_FLY_ACK },
+        { SMSG_MOVE_WATER_WALK, SMSG_MOVE_LAND_WALK, CMSG_MOVE_WATER_WALK_ACK },
+        { SMSG_MOVE_SET_CAN_TRANSITION_BETWEEN_SWIM_AND_FLY, SMSG_MOVE_UNSET_CAN_TRANSITION_BETWEEN_SWIM_AND_FLY, CMSG_MOVE_SET_CAN_TRANSITION_BETWEEN_SWIM_AND_FLY_ACK },
+        { SMSG_MOVE_GRAVITY_ENABLE, CMSG_MOVE_GRAVITY_ENABLE_ACK },
+        { SMSG_MOVE_GRAVITY_DISABLE, CMSG_MOVE_GRAVITY_DISABLE_ACK },
+        { SMSG_MOVE_SET_COLLISION_HGT, CMSG_MOVE_SET_COLLISION_HGT_ACK }
+    };
 }
 
 AnticheatMgr::~AnticheatMgr()
@@ -384,7 +410,7 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
 
     if (player->IsFalling() || (player->IsFalling() && player->IsMounted()))
         return;
-	
+
     if (player->duel)
     {
         if ((xDiff >= 50.0f || yDiff >= 50.0f || (zDiff >= 10.0f && !player->IsFlying())) && !player->CanTeleport())
@@ -1224,6 +1250,60 @@ void AnticheatMgr::HandlePlayerLogout(Player* player)
     CharacterDatabase.Execute("DELETE FROM players_reports_status WHERE guid={}", player->GetGUID().GetCounter());
     // Delete not needed data from the memory.
     m_Players.erase(player->GetGUID());
+}
+
+void AnticheatMgr::AckUpdate(Player* player, uint32 diff)
+{
+    if (_updateCheckTimer <= diff)
+    {
+        DoActions(player);
+        _updateCheckTimer = 4000;
+    }
+    else
+    {
+        _updateCheckTimer -= diff;
+    }
+}
+
+void AnticheatMgr::DoActions(Player* player)
+{
+    auto const now = getMSTime();
+
+    for (auto& order : _opackorders)
+    {
+        if (order.counter > 0 && order.lastRcvd < order.lastSent && (now - order.lastSent) > ALLOWED_ACK_LAG)
+        {
+            uint32 latency = 0;
+            latency = player->GetSession()->GetLatency();
+            LOG_INFO("anticheat.module", "Opcode Manipulation Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            order.counter = 0;
+        }
+    }
+}
+
+void AnticheatMgr::OrderSent(WorldPacket const* data)
+{
+    for (auto& order : _opackorders)
+    {
+        if (order.serverOpcode1 == data->GetOpcode() || order.serverOpcode2 == data->GetOpcode())
+        {
+            order.lastSent = getMSTime();
+            ++order.counter;
+            break;
+        }
+    }
+}
+
+void AnticheatMgr::CheckForOrderAck(uint32 opcode)
+{
+    for (auto& order : _opackorders)
+    {
+        if (order.clientResp == opcode)
+        {
+            --order.counter;
+            break;
+        }
+    }
 }
 
 void AnticheatMgr::SavePlayerData(Player* player)

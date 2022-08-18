@@ -51,6 +51,12 @@ public:
         if (sConfigMgr->GetOption<bool>("Anticheat.LoginMessage", true))
             ChatHandler(player->GetSession()).PSendSysMessage("This server is running an Anticheat Module.");
     }
+
+    void OnUpdate(Player* player, uint32 diff) override
+    {
+        if (sConfigMgr->GetOption<bool>("Anticheat.OpAckOrderHack", true))
+            sAnticheatMgr->AckUpdate(player, diff);
+    }
 };
 
 class AnticheatWorldScript : public WorldScript

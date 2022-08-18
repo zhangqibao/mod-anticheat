@@ -57,6 +57,21 @@ enum ReportTypes
 // GUID is the key.
 typedef std::map<ObjectGuid, AnticheatData> AnticheatPlayersDataMap;
 
+class ServerOrderData
+{
+public:
+    ServerOrderData(uint32 serv, uint32 resp) : serverOpcode1(serv), serverOpcode2(0), clientResp(resp), lastSent(0), lastRcvd(0), counter(0) {}
+    ServerOrderData(uint32 serv1, uint32 serv2, uint32 resp) : serverOpcode1(serv1), serverOpcode2(serv2), clientResp(resp), lastSent(0), lastRcvd(0), counter(0) {}
+
+    uint32 serverOpcode1;
+    uint32 serverOpcode2;
+    uint32 clientResp;
+
+    uint32 lastSent;
+    uint32 lastRcvd;
+    int32 counter;
+};
+
 class AnticheatMgr
 {
     AnticheatMgr();
@@ -76,6 +91,13 @@ class AnticheatMgr
         void SavePlayerDataDaily(Player* player);
         void HandlePlayerLogin(Player* player);
         void HandlePlayerLogout(Player* player);
+        void AckUpdate(Player* player, uint32 diff);
+        void DoActions(Player* player);
+
+        // orders
+        void OrderSent(WorldPacket const* data);
+        void CheckForOrderAck(uint32 opcode);
+        std::vector<ServerOrderData> _opackorders; // Packets sent by server, triggering *_ACK from client
 
         uint32 GetTotalReports(ObjectGuid guid);
         float GetAverage(ObjectGuid guid);
@@ -105,6 +127,7 @@ class AnticheatMgr
         bool MustCheckTempReports(uint8 type);
         uint32 _counter = 0;
         uint32 _alertFrequency = 0;
+        uint32 _updateCheckTimer = 4000;
         AnticheatPlayersDataMap m_Players;                        ///< Player data
 };
 
