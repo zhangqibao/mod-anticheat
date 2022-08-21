@@ -221,6 +221,8 @@ public:
             uint32 gravity_reports = sAnticheatMgr->GetTypeReports(guid, 10);
             uint32 antiknockback_reports = sAnticheatMgr->GetTypeReports(guid, 11);
             uint32 no_fall_damage_reports = sAnticheatMgr->GetTypeReports(guid, 12);
+            uint32 op_ack_reports = sAnticheatMgr->GetTypeReports(guid, 13);
+
             Player* playerTarget = player->GetConnectedPlayer();
             uint32 latency = 0;
             latency = playerTarget->GetSession()->GetLatency();
@@ -232,6 +234,7 @@ public:
             handler->PSendSysMessage("Ignore Control Reports: %u || Ignore Z-Axis Reports: %u", ignorecontrol_reports, zaxis_reports);
             handler->PSendSysMessage("Ignore Anti-Swim Reports: %u || Gravity Reports: %u", antiswim_reports, gravity_reports);
             handler->PSendSysMessage("Anti-Knock Back Reports: %u || No Fall Damage Reports: %u", antiknockback_reports, no_fall_damage_reports);
+            handler->PSendSysMessage("Op Ack Reports: %u", op_ack_reports);
             return true;
         }
         else

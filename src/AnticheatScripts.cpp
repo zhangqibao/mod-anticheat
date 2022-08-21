@@ -54,7 +54,7 @@ public:
 
     void OnUpdate(Player* player, uint32 diff) override
     {
-        if (sConfigMgr->GetOption<bool>("Anticheat.OpAckOrderHack", true))
+        if (sConfigMgr->GetOption<bool>("Anticheat.OpAckOrderHack", true) && sConfigMgr->GetOption<bool>("Anticheat.Enabled", true))
             sAnticheatMgr->AckUpdate(player, diff);
     }
 };
