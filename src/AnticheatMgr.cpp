@@ -267,12 +267,22 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
     BuildReport(player, FLY_HACK_REPORT);
 }
 
-void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo /* movementInfo */, uint32 opcode)
+void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
 {
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectJumpHack", true))
         return;
 
     ObjectGuid key = player->GetGUID();
+
+    const float ground_Z = movementInfo.pos.GetPositionZ() - player->GetMapHeight(movementInfo.pos.GetPositionX(), movementInfo.pos.GetPositionY(), movementInfo.pos.GetPositionZ());
+
+    const bool no_fly_auras = !(player->HasAuraType(SPELL_AURA_FLY) || player->HasAuraType(SPELL_AURA_MOD_INCREASE_VEHICLE_FLIGHT_SPEED)
+        || player->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) || player->HasAuraType(SPELL_AURA_MOD_INCREASE_FLIGHT_SPEED)
+        || player->HasAuraType(SPELL_AURA_MOD_MOUNTED_FLIGHT_SPEED_ALWAYS));
+    const bool no_fly_flags = ((movementInfo.flags & (MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING)) == 0);
+    const bool no_swim_in_water = !player->IsInWater();
+    const bool no_swim_above_water = movementInfo.pos.GetPositionZ() - 7.0f >= player->GetMap()->GetWaterLevel(movementInfo.pos.GetPositionX(), movementInfo.pos.GetPositionY());
+    const bool no_swim_water = no_swim_in_water && no_swim_above_water;
 
     if (m_Players[key].GetLastOpcode() == MSG_MOVE_JUMP && opcode == MSG_MOVE_JUMP)
     {
@@ -283,6 +293,19 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo /* movementInf
             LOG_INFO("anticheat.module", "AnticheatMgr:: Jump-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
         }
         BuildReport(player, JUMP_HACK_REPORT);
+    }
+    else if (no_fly_auras && no_fly_flags && no_swim_water)
+    {
+        if (ground_Z > 5.0f && movementInfo.pos.GetPositionZ() >= player->GetPositionZ())
+        {
+            if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+            {
+                uint32 latency = 0;
+                latency = player->GetSession()->GetLatency();
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Jump-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            }
+            BuildReport(player, JUMP_HACK_REPORT);
+        }
     }
 }
 
