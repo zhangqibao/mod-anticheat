@@ -309,7 +309,6 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
     }
 }
 
-
 void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
 {
     if (!sConfigMgr->GetOption<bool>("Anticheat.DetectTelePlaneHack", true))
