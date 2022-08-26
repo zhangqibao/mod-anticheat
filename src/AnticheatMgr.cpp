@@ -225,7 +225,8 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("anticheat.module", "AnticheatMgr:: Speed-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Speed-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
             }
             BuildReport(player, SPEED_HACK_REPORT);
         }
@@ -261,7 +262,8 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
     {
         uint32 latency = 0;
         latency = player->GetSession()->GetLatency();
-        LOG_INFO("anticheat.module", "AnticheatMgr:: Fly-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+        std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+        LOG_INFO("anticheat.module", "AnticheatMgr:: Fly-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
     }
 
     BuildReport(player, FLY_HACK_REPORT);
@@ -290,7 +292,8 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
         {
             uint32 latency = 0;
             latency = player->GetSession()->GetLatency();
-            LOG_INFO("anticheat.module", "AnticheatMgr:: Jump-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Jump-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
         BuildReport(player, JUMP_HACK_REPORT);
     }
@@ -311,7 +314,8 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("anticheat.module", "AnticheatMgr:: Jump-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Jump-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
             }
             BuildReport(player, JUMP_HACK_REPORT);
         }
@@ -368,7 +372,8 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
         {
             uint32 latency = 0;
             latency = player->GetSession()->GetLatency();
-            LOG_INFO("anticheat.module", "AnticheatMgr:: Teleport To Plane - Hack detected player {} ({})  - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Teleport To Plane - Hack detected player {} ({})  - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
 
         BuildReport(player, TELEPORT_PLANE_HACK_REPORT);
@@ -409,7 +414,8 @@ void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo,
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("anticheat.module", "AnticheatMgr:: Climb-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Climb-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
             }
 
             BuildReport(player, CLIMB_HACK_REPORT);
@@ -455,14 +461,16 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
             sWorld->SendGlobalGMMessage(&data);
             uint32 latency = 0;
             latency = player->GetSession()->GetLatency();
+            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+            std::string goXYZ2 = ".go xyz " + std::to_string(opponent->GetPositionX()) + " " + std::to_string(opponent->GetPositionY()) + " " + std::to_string(opponent->GetPositionZ() + 1.0f) + " " + std::to_string(opponent->GetMap()->GetId()) + " " + std::to_string(opponent->GetOrientation());
             uint32 latency2 = 0;
             latency2 = opponent->GetSession()->GetLatency();
             sWorld->SendGMText(LANG_ANTICHEAT_DUEL, player->GetName().c_str(), latency, opponent->GetName().c_str(), latency2);
 
             if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
             {
-                LOG_INFO("anticheat.module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), opponent->GetName(), latency);
-                LOG_INFO("anticheat.module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms", opponent->GetName(), opponent->GetGUID().ToString(), player->GetName(), latency2);
+                LOG_INFO("anticheat.module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms - IP: {} - Cheat Flagged At: {} - Cheat Flag At: {}", player->GetName(), player->GetGUID().ToString(), opponent->GetName(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
+                LOG_INFO("anticheat.module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms - IP: {} - Cheat Flagged At: {} - Cheat Flag At: {}", opponent->GetName(), opponent->GetGUID().ToString(), player->GetName(), latency2, opponent->GetSession()->GetRemoteAddress().c_str(), goXYZ2);
             }
             BuildReport(player, TELEPORT_HACK_REPORT);
             BuildReport(opponent, TELEPORT_HACK_REPORT);
@@ -500,7 +508,8 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
         {
             uint32 latency = 0;
             latency = player->GetSession()->GetLatency();
-            LOG_INFO("anticheat.module", "AnticheatMgr:: Teleport-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Teleport-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
 
         BuildReport(player, TELEPORT_HACK_REPORT);
@@ -566,7 +575,8 @@ void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movem
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("anticheat.module", "AnticheatMgr:: Ignore Control - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Ignore Control - Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
             }
 
             BuildReport(player, IGNORE_CONTROL_REPORT);
@@ -591,7 +601,8 @@ void AnticheatMgr::GravityHackDetection(Player* player, MovementInfo movementInf
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("anticheat.module", "AnticheatMgr:: Gravity-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Gravity-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
             }
             BuildReport(player, GRAVITY_HACK_REPORT);
         }
@@ -620,7 +631,8 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo movemen
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("anticheat.module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
             }
             BuildReport(player, WALK_WATER_HACK_REPORT);
         }
@@ -652,7 +664,8 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo movemen
     {
         uint32 latency = 0;
         latency = player->GetSession()->GetLatency();
-        LOG_INFO("anticheat.module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+        std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+        LOG_INFO("anticheat.module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
     }
     BuildReport(player, WALK_WATER_HACK_REPORT);
 }
@@ -720,7 +733,8 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
         {
             uint32 latency = 0;
             latency = player->GetSession()->GetLatency();
-            LOG_INFO("anticheat.module", "AnticheatMgr:: Ignore Zaxis Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Ignore Zaxis Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
  
         BuildReport(player, ZAXIS_HACK_REPORT);
@@ -760,7 +774,8 @@ void AnticheatMgr::AntiSwimHackDetection(Player* player, MovementInfo movementIn
         {
             uint32 latency = 0;
             latency = player->GetSession()->GetLatency();
-            LOG_INFO("anticheat.module", "AnticheatMgr:: Anti-Swim-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Anti-Swim-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
 
         BuildReport(player, ANTISWIM_HACK_REPORT);
@@ -787,7 +802,8 @@ void AnticheatMgr::AntiKnockBackHackDetection(Player* player, MovementInfo movem
         {
             uint32 latency = 0;
             latency = player->GetSession()->GetLatency();
-            LOG_INFO("anticheat.module", "AnticheatMgr:: Anti-Knock Back - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Anti-Knock Back - Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
         BuildReport(player, ANTIKNOCK_BACK_HACK_REPORT);
     }
@@ -833,7 +849,8 @@ void AnticheatMgr::NoFallDamageDetection(Player* player, MovementInfo movementIn
                 {
                     uint32 latency = 0;
                     latency = player->GetSession()->GetLatency();
-                    LOG_INFO("anticheat.module", "AnticheatMgr:: No Fall Damage - Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                    std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                    LOG_INFO("anticheat.module", "AnticheatMgr:: No Fall Damage - Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                 }
                 BuildReport(player, NO_FALL_DAMAGE_HACK_REPORT);
             }
@@ -884,7 +901,8 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         {
                             uint32 latency = 0;
                             latency = player->GetSession()->GetLatency();
-                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG AV Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG AV Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                         }
 
                         BuildReport(player, TELEPORT_HACK_REPORT);
@@ -916,8 +934,9 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
                         {
                             uint32 latency = 0;
+                            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
                             latency = player->GetSession()->GetLatency();
-                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG AV Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG AV Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                         }
                         BuildReport(player, TELEPORT_HACK_REPORT);
                     }
@@ -955,7 +974,8 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                 {
                     uint32 latency = 0;
                     latency = player->GetSession()->GetLatency();
-                    LOG_INFO("anticheat.module", "AnticheatMgr:: BG WG Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                    std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                    LOG_INFO("anticheat.module", "AnticheatMgr:: BG WG Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                 }
                 BuildReport(player, TELEPORT_HACK_REPORT);
             }
@@ -992,7 +1012,8 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         {
                             uint32 latency = 0;
                             latency = player->GetSession()->GetLatency();
-                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG WG Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG WG Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                         }
 
                         BuildReport(player, TELEPORT_HACK_REPORT);
@@ -1024,7 +1045,8 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         {
                             uint32 latency = 0;
                             latency = player->GetSession()->GetLatency();
-                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG WG Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG WG Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                         }
 
                         BuildReport(player, TELEPORT_HACK_REPORT);
@@ -1067,7 +1089,8 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         {
                             uint32 latency = 0;
                             latency = player->GetSession()->GetLatency();
-                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG AB Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG AB Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                         }
 
                         BuildReport(player, TELEPORT_HACK_REPORT);
@@ -1099,7 +1122,8 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         {
                             uint32 latency = 0;
                             latency = player->GetSession()->GetLatency();
-                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG AB Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG AB Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                         }
 
                         BuildReport(player, TELEPORT_HACK_REPORT);
@@ -1142,7 +1166,8 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         {
                             uint32 latency = 0;
                             latency = player->GetSession()->GetLatency();
-                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG EOTS Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG EOTS Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                         }
 
                         BuildReport(player, TELEPORT_HACK_REPORT);
@@ -1174,7 +1199,8 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         {
                             uint32 latency = 0;
                             latency = player->GetSession()->GetLatency();
-                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG EOTS Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG EOTS Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                         }
 
                         BuildReport(player, TELEPORT_HACK_REPORT);
@@ -1217,7 +1243,8 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         {
                             uint32 latency = 0;
                             latency = player->GetSession()->GetLatency();
-                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG IOC Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG IOC Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                         }
 
                         BuildReport(player, TELEPORT_HACK_REPORT);
@@ -1249,7 +1276,8 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         {
                             uint32 latency = 0;
                             latency = player->GetSession()->GetLatency();
-                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG IOC Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                            LOG_INFO("anticheat.module", "AnticheatMgr:: BG IOC Start Bound Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                         }
 
                         BuildReport(player, TELEPORT_HACK_REPORT);
@@ -1309,7 +1337,8 @@ void AnticheatMgr::DoActions(Player* player)
             {
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
-                LOG_INFO("anticheat.module", "Opcode Manipulation Hack detected player {} ({}) - Latency: {} ms", player->GetName(), player->GetGUID().ToString(), latency);
+                std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+                LOG_INFO("anticheat.module", "Opcode Manipulation Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                 order.counter = 0;
             }
             BuildReport(player, OP_ACK_HACK_REPORT);
@@ -1459,7 +1488,7 @@ void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
         {
             AnticheatData playerData = m_Players[player->GetGUID()];
             //                                                              1     2          3             4           5            6                 7                     8             9             10                11                  12             13                14             15                    16                   17                  18
-            CharacterDatabase.Execute("REPLACE INTO daily_players_reports (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleport_reports,ignorecontrol_reports,zaxis_reports,antiswim_reports,gravity_reports,antiknockback_reports,no_fall_damage_reports,op_ack_hack_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), playerData.GetAverage(), playerData.GetTotalReports(), playerData.GetTypeReports(SPEED_HACK_REPORT), playerData.GetTypeReports(FLY_HACK_REPORT), playerData.GetTypeReports(JUMP_HACK_REPORT), playerData.GetTypeReports(WALK_WATER_HACK_REPORT), playerData.GetTypeReports(TELEPORT_PLANE_HACK_REPORT), playerData.GetTypeReports(CLIMB_HACK_REPORT), playerData.GetTypeReports(TELEPORT_HACK_REPORT), playerData.GetTypeReports(IGNORE_CONTROL_REPORT), playerData.GetTypeReports(ZAXIS_HACK_REPORT), playerData.GetTypeReports(ANTISWIM_HACK_REPORT), playerData.GetTypeReports(GRAVITY_HACK_REPORT), playerData.GetTypeReports(ANTIKNOCK_BACK_HACK_REPORT), playerData.GetTypeReports(NO_FALL_DAMAGE_HACK_REPORT), playerData.GetTypeReports(OP_ACK_HACK_REPORT), playerData.GetCreationTime());
+            CharacterDatabase.Execute("REPLACE INTO daily_players_reports (guid,average,total_reports,speed_reports,fly_reports,jump_reports,waterwalk_reports,teleportplane_reports,climb_reports,teleport_reports,ignorecontrol_reports,zaxis_reports,antiswim_reports,gravity_reports,antiknockback_reports,no_fall_damage_reports,op_ack_hack_reports,creation_time) VALUES ({},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{});", player->GetGUID().GetCounter(), playerData.GetAverage(), playerData.GetTotalReports(), playerData.GetTypeReports(SPEED_HACK_REPORT), playerData.GetTypeReports(FLY_HACK_REPORT), playerData.GetTypeReports(JUMP_HACK_REPORT), playerData.GetTypeReports(WALK_WATER_HACK_REPORT), playerData.GetTypeReports(TELEPORT_PLANE_HACK_REPORT), playerData.GetTypeReports(CLIMB_HACK_REPORT), playerData.GetTypeReports(TELEPORT_HACK_REPORT), playerData.GetTypeReports(IGNORE_CONTROL_REPORT), playerData.GetTypeReports(ZAXIS_HACK_REPORT), playerData.GetTypeReports(ANTISWIM_HACK_REPORT), playerData.GetTypeReports(GRAVITY_HACK_REPORT), playerData.GetTypeReports(ANTIKNOCK_BACK_HACK_REPORT), playerData.GetTypeReports(NO_FALL_DAMAGE_HACK_REPORT), playerData.GetTypeReports(OP_ACK_HACK_REPORT), playerData.GetCreationTime());
             m_Players[key].SetDailyReportState(true);
         }
     }
