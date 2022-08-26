@@ -239,12 +239,12 @@ public:
                 handler->PSendSysMessage("|cffff0000Ignore Anti-Swim Reports: |cffffff00%u |cffff0000Gravity Reports: |cffffff00%u", antiswim_reports, gravity_reports);
                 handler->PSendSysMessage("|cffff0000Anti-Knock Back Reports: |cffffff00%u |cffff0000No Fall Damage Reports: |cffffff00%u", antiknockback_reports, no_fall_damage_reports);
                 handler->PSendSysMessage("|cffff0000Op Ack Reports: |cffffff00%u", op_ack_reports);
-                return true;
             }
             if (handler->IsConsole())
             {
                 handler->PSendSysMessage("-----------------------------------------------------------------");
-                handler->PSendSysMessage("Information about player %s || Latency %u ms", player->GetName().c_str(), latency);
+                handler->PSendSysMessage("Information about player %s", player->GetName().c_str());
+                handler->PSendSysMessage("IP Address: %s || Latency %u ms", playerTarget->GetSession()->GetRemoteAddress().c_str(), latency);
                 handler->PSendSysMessage("Average: %f || Total Reports: %u ", average, total_reports);
                 handler->PSendSysMessage("Speed Reports: %u || Fly Reports: %u || Jump Reports: %u ", speed_reports, fly_reports, jump_reports);
                 handler->PSendSysMessage("Walk On Water Reports: %u  || Teleport To Plane Reports: %u", waterwalk_reports, teleportplane_reports);
@@ -253,8 +253,8 @@ public:
                 handler->PSendSysMessage("Ignore Anti-Swim Reports: %u || Gravity Reports: %u", antiswim_reports, gravity_reports);
                 handler->PSendSysMessage("Anti-Knock Back Reports: %u || No Fall Damage Reports: %u", antiknockback_reports, no_fall_damage_reports);
                 handler->PSendSysMessage("Op Ack Reports: %u", op_ack_reports);
-                return true;
             }
+            return true;
         }
         else
         {
