@@ -35,3 +35,4 @@ END //
 DELIMITER ;
 
 CALL updatemodanticheatdb();
+DROP PROCEDURE IF EXISTS `updatemodanticheatdb`;
