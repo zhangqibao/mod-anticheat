@@ -228,9 +228,48 @@ public:
             latency = playerTarget->GetSession()->GetLatency();
             if (!handler->IsConsole())
             {
+                //                                                                                                    0             1            2         3           4        5
+                QueryResult resultADB = LoginDatabase.Query("SELECT FROM_UNIXTIME(bandate, '%Y-%m-%d..%H:%i:%s') as bandate, unbandate-bandate, active, unbandate, banreason, bannedby FROM account_banned WHERE id = '{}' ORDER BY bandate ASC", playerTarget->GetSession()->GetAccountId());
+                //                                                                                                         0             1              2        3          4         5
+                QueryResult resultCDB = CharacterDatabase.Query("SELECT FROM_UNIXTIME(bandate, '%Y-%m-%d..%H:%i:%s') as bandate, unbandate - bandate, active, unbandate, banreason, bannedby FROM character_banned WHERE guid='{}' ORDER BY bandate ASC;", playerTarget->GetGUID().GetCounter());
+
                 handler->PSendSysMessage("|cFFFFA500-----------------------------------------------------------------");
                 handler->PSendSysMessage("|cFF20B2AAInformation about player: |cffffff00%s", player->GetName().c_str());
                 handler->PSendSysMessage("|cffff0000IP Address: |cffffff00%s |cffff0000Latency |cffffff00%u ms", playerTarget->GetSession()->GetRemoteAddress().c_str(), latency);
+                if (resultADB)
+                {
+                    do
+                    {
+                        Field* fields = resultADB->Fetch();
+                        std::string startbanEnd = Acore::Time::TimeToTimestampStr(Seconds(fields[3].Get<uint64>()));
+                        std::string bannedReason = fields[4].Get<std::string>();
+                        std::string bannedBy = fields[5].Get<std::string>();
+                        handler->PSendSysMessage("|cffff0000Account Previously Banned: |cffffff00Yes");
+                        handler->PSendSysMessage("|cffff0000Ban Ended: |cffffff00%s", startbanEnd.c_str());
+                        handler->PSendSysMessage("|cffff0000Ban by: |cffffff00%s |cffff0000Ban Reason: |cffffff00%s", bannedBy.c_str(), bannedReason.c_str());
+                    } while (resultADB->NextRow());
+                }
+                if (!resultADB)
+                {
+                    handler->PSendSysMessage("|cffff0000Account Previously Banned: |cffffff00No");
+                }
+                if (resultCDB)
+                {
+                    do
+                    {
+                        Field* fields = resultCDB->Fetch();
+                        std::string startbanEnd = Acore::Time::TimeToTimestampStr(Seconds(fields[3].Get<uint64>()));
+                        std::string bannedReason = fields[4].Get<std::string>();
+                        std::string bannedBy = fields[5].Get<std::string>();
+                        handler->PSendSysMessage("|cffff0000Character Previously Banned: |cffffff00Yes");
+                        handler->PSendSysMessage("|cffff0000Ban Ended: |cffffff00%s", startbanEnd.c_str());
+                        handler->PSendSysMessage("|cffff0000Ban by: |cffffff00%s |cffff0000Ban Reason: |cffffff00%s", bannedBy.c_str(), bannedReason.c_str());
+                    } while (resultCDB->NextRow());
+                }
+                if (!resultCDB)
+                {
+                    handler->PSendSysMessage("|cffff0000Character Previously Banned: |cffffff00No");
+                }
                 handler->PSendSysMessage("|cffff0000Average: |cffffff00%f |cffff0000Total Reports: |cffffff00%u ", average, total_reports);
                 handler->PSendSysMessage("|cffff0000Speed Reports: |cffffff00%u |cffff0000Fly Reports: |cffffff00%u |cffff0000Jump Reports: |cffffff00%u ", speed_reports, fly_reports, jump_reports);
                 handler->PSendSysMessage("|cffff0000Walk On Water Reports:|cffffff00 %u |cffff0000Teleport To Plane Reports: |cffffff00%u", waterwalk_reports, teleportplane_reports);
@@ -242,9 +281,48 @@ public:
             }
             if (handler->IsConsole())
             {
+                //                                                                                                    0             1            2         3           4        5
+                QueryResult resultADB = LoginDatabase.Query("SELECT FROM_UNIXTIME(active, '%Y-%m-%d..%H:%i:%s') as bandate, unbandate-bandate, active, unbandate, banreason, bannedby FROM account_banned WHERE id = '{}' ORDER BY bandate ASC", playerTarget->GetSession()->GetAccountId());
+                //                                                                                                         0             1              2        3          4         5
+                QueryResult resultCDB = CharacterDatabase.Query("SELECT FROM_UNIXTIME(active, '%Y-%m-%d..%H:%i:%s') as bandate, unbandate - bandate, active, unbandate, banreason, bannedby FROM character_banned WHERE guid={};", playerTarget->GetGUID().GetCounter());
+
                 handler->PSendSysMessage("-----------------------------------------------------------------");
                 handler->PSendSysMessage("Information about player %s", player->GetName().c_str());
                 handler->PSendSysMessage("IP Address: %s || Latency %u ms", playerTarget->GetSession()->GetRemoteAddress().c_str(), latency);
+                if (resultADB)
+                {
+                    do
+                    {
+                        Field* fields = resultADB->Fetch();
+                        std::string startbanEnd = Acore::Time::TimeToTimestampStr(Seconds(fields[3].Get<uint64>()));
+                        std::string bannedReason = fields[4].Get<std::string>();
+                        std::string bannedBy = fields[5].Get<std::string>();
+                        handler->PSendSysMessage("Account Previously Banned: Yes");
+                        handler->PSendSysMessage("Ban Ended: %s", startbanEnd.c_str());
+                        handler->PSendSysMessage("Ban by: %s || Ban Reason: %s", bannedBy.c_str(), bannedReason.c_str());
+                    } while (resultADB->NextRow());
+                }
+                if (!resultADB)
+                {
+                    handler->PSendSysMessage("Account Previously Banned: No");
+                }
+                if (resultCDB)
+                {
+                    do
+                    {
+                        Field* fields = resultCDB->Fetch();
+                        std::string startbanEnd = Acore::Time::TimeToTimestampStr(Seconds(fields[3].Get<uint64>()));
+                        std::string bannedReason = fields[4].Get<std::string>();
+                        std::string bannedBy = fields[5].Get<std::string>();
+                        handler->PSendSysMessage("Character Previously Banned: Yes");
+                        handler->PSendSysMessage("Ban Ended: %s", startbanEnd.c_str());
+                        handler->PSendSysMessage("Ban by: %s || Ban Reason: %s", bannedBy.c_str(), bannedReason.c_str());
+                    } while (resultCDB->NextRow());
+                }
+                if (!resultCDB)
+                {
+                    handler->PSendSysMessage("Character Previously Banned: No");
+                }
                 handler->PSendSysMessage("Average: %f || Total Reports: %u ", average, total_reports);
                 handler->PSendSysMessage("Speed Reports: %u || Fly Reports: %u || Jump Reports: %u ", speed_reports, fly_reports, jump_reports);
                 handler->PSendSysMessage("Walk On Water Reports: %u  || Teleport To Plane Reports: %u", waterwalk_reports, teleportplane_reports);
