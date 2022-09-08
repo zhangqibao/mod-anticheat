@@ -277,12 +277,12 @@ public:
                     do
                     {
                         Field* fields = resultLDB->Fetch();
-                        handler->PSendSysMessage("|cffff0000Macro Requiring Lua unlock Detected: |cffffff00Yes");
+                        handler->PSendSysMessage("|cffff0000Macro Requiring Lua Unlock Detected: |cffffff00Yes");
                     } while (resultLDB->NextRow());
                 }
                 if (!resultLDB)
                 {
-                    handler->PSendSysMessage("|cffff0000Macro Requiring Lua unlock Detected: |cffffff00No");
+                    handler->PSendSysMessage("|cffff0000Macro Requiring Lua Unlock Detected: |cffffff00No");
                 }
                 handler->PSendSysMessage("|cffff0000Average: |cffffff00%f |cffff0000Total Reports: |cffffff00%u ", average, total_reports);
                 handler->PSendSysMessage("|cffff0000Speed Reports: |cffffff00%u |cffff0000Fly Reports: |cffffff00%u |cffff0000Jump Reports: |cffffff00%u ", speed_reports, fly_reports, jump_reports);
@@ -344,12 +344,12 @@ public:
                     do
                     {
                         Field* fields = resultLDB->Fetch();
-                        handler->PSendSysMessage("Macro Requiring Lua unlock Detected: Yes");
+                        handler->PSendSysMessage("Macro Requiring Lua Unlock Detected: Yes");
                     } while (resultLDB->NextRow());
                 }
                 if (!resultLDB)
                 {
-                    handler->PSendSysMessage("Macro Requiring Lua unlock Detected: No");
+                    handler->PSendSysMessage("Macro Requiring Lua Unlock Detected: No");
                 }
                 handler->PSendSysMessage("Average: %f || Total Reports: %u ", average, total_reports);
                 handler->PSendSysMessage("Speed Reports: %u || Fly Reports: %u || Jump Reports: %u ", speed_reports, fly_reports, jump_reports);
