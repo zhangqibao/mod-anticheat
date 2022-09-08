@@ -232,6 +232,8 @@ public:
                 QueryResult resultADB = LoginDatabase.Query("SELECT FROM_UNIXTIME(bandate, '%Y-%m-%d..%H:%i:%s') as bandate, unbandate-bandate, active, unbandate, banreason, bannedby FROM account_banned WHERE id = '{}' ORDER BY bandate ASC", playerTarget->GetSession()->GetAccountId());
                 //                                                                                                         0             1              2        3          4         5
                 QueryResult resultCDB = CharacterDatabase.Query("SELECT FROM_UNIXTIME(bandate, '%Y-%m-%d..%H:%i:%s') as bandate, unbandate - bandate, active, unbandate, banreason, bannedby FROM character_banned WHERE guid='{}' ORDER BY bandate ASC;", playerTarget->GetGUID().GetCounter());
+                //                                                           0      1      2     3
+                QueryResult resultLDB = CharacterDatabase.Query("SELECT accountId, type, time, data FROM account_data WHERE `data` LIKE '%CastSpellByName%' AND accountID='{}';", playerTarget->GetSession()->GetAccountId());
 
                 handler->PSendSysMessage("|cFFFFA500-----------------------------------------------------------------");
                 handler->PSendSysMessage("|cFF20B2AAInformation about player: |cffffff00%s", player->GetName().c_str());
@@ -270,6 +272,18 @@ public:
                 {
                     handler->PSendSysMessage("|cffff0000Character Previously Banned: |cffffff00No");
                 }
+                if (resultLDB)
+                {
+                    do
+                    {
+                        Field* fields = resultLDB->Fetch();
+                        handler->PSendSysMessage("|cffff0000Macro Requiring Lua unlock Detected: |cffffff00Yes");
+                    } while (resultLDB->NextRow());
+                }
+                if (!resultLDB)
+                {
+                    handler->PSendSysMessage("|cffff0000Macro Requiring Lua unlock Detected: |cffffff00No");
+                }
                 handler->PSendSysMessage("|cffff0000Average: |cffffff00%f |cffff0000Total Reports: |cffffff00%u ", average, total_reports);
                 handler->PSendSysMessage("|cffff0000Speed Reports: |cffffff00%u |cffff0000Fly Reports: |cffffff00%u |cffff0000Jump Reports: |cffffff00%u ", speed_reports, fly_reports, jump_reports);
                 handler->PSendSysMessage("|cffff0000Walk On Water Reports:|cffffff00 %u |cffff0000Teleport To Plane Reports: |cffffff00%u", waterwalk_reports, teleportplane_reports);
@@ -285,6 +299,8 @@ public:
                 QueryResult resultADB = LoginDatabase.Query("SELECT FROM_UNIXTIME(active, '%Y-%m-%d..%H:%i:%s') as bandate, unbandate-bandate, active, unbandate, banreason, bannedby FROM account_banned WHERE id = '{}' ORDER BY bandate ASC", playerTarget->GetSession()->GetAccountId());
                 //                                                                                                         0             1              2        3          4         5
                 QueryResult resultCDB = CharacterDatabase.Query("SELECT FROM_UNIXTIME(active, '%Y-%m-%d..%H:%i:%s') as bandate, unbandate - bandate, active, unbandate, banreason, bannedby FROM character_banned WHERE guid={};", playerTarget->GetGUID().GetCounter());
+                //                                                           0      1      2     3
+                QueryResult resultLDB = CharacterDatabase.Query("SELECT accountId, type, time, data FROM account_data WHERE `data` LIKE '%CastSpellByName%' AND accountID='{}';", playerTarget->GetSession()->GetAccountId());
 
                 handler->PSendSysMessage("-----------------------------------------------------------------");
                 handler->PSendSysMessage("Information about player %s", player->GetName().c_str());
@@ -322,6 +338,18 @@ public:
                 if (!resultCDB)
                 {
                     handler->PSendSysMessage("Character Previously Banned: No");
+                }
+                if (resultLDB)
+                {
+                    do
+                    {
+                        Field* fields = resultLDB->Fetch();
+                        handler->PSendSysMessage("Macro Requiring Lua unlock Detected: Yes");
+                    } while (resultLDB->NextRow());
+                }
+                if (!resultLDB)
+                {
+                    handler->PSendSysMessage("Macro Requiring Lua unlock Detected: No");
                 }
                 handler->PSendSysMessage("Average: %f || Total Reports: %u ", average, total_reports);
                 handler->PSendSysMessage("Speed Reports: %u || Fly Reports: %u || Jump Reports: %u ", speed_reports, fly_reports, jump_reports);
