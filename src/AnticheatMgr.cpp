@@ -299,6 +299,9 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
     }
     else if (no_fly_auras && no_fly_flags && no_swim_water)
     {
+        if (!sConfigMgr->GetOption<bool>("Anticheat.StricterDetectJumpHack", true))
+            return;
+
         if (m_Players[key].GetLastOpcode() == MSG_MOVE_JUMP && !player->IsFalling())
             return;
 
@@ -324,7 +327,7 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
                 uint32 latency = 0;
                 latency = player->GetSession()->GetLatency();
                 std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
-                LOG_INFO("anticheat.module", "AnticheatMgr:: Jump-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
+                LOG_INFO("anticheat.module", "AnticheatMgr:: Stricter Check Jump-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
             }
             BuildReport(player, JUMP_HACK_REPORT);
         }
