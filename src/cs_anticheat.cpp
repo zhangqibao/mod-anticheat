@@ -233,7 +233,7 @@ public:
                 //                                                                                                         0             1              2        3          4         5
                 QueryResult resultCDB = CharacterDatabase.Query("SELECT FROM_UNIXTIME(bandate, '%Y-%m-%d..%H:%i:%s') as bandate, unbandate - bandate, active, unbandate, banreason, bannedby FROM character_banned WHERE guid='{}' ORDER BY bandate ASC;", playerTarget->GetGUID().GetCounter());
                 //                                                           0      1      2     3
-                QueryResult resultLDB = CharacterDatabase.Query("SELECT accountId, type, time, data FROM account_data WHERE `data` LIKE '%CastSpellByName%' AND accountID='{}';", playerTarget->GetSession()->GetAccountId());
+                QueryResult resultLDB = CharacterDatabase.Query("SELECT accountId, type, time, data FROM account_data WHERE `data` LIKE '%CastSpellByName%' AND accountId ='{}';", playerTarget->GetSession()->GetAccountId());
 
                 handler->PSendSysMessage("|cFFFFA500-----------------------------------------------------------------");
                 handler->PSendSysMessage("|cFF20B2AAInformation about player: |cffffff00%s", player->GetName().c_str());
@@ -299,7 +299,7 @@ public:
                 //                                                                                                         0             1              2        3          4         5
                 QueryResult resultCDB = CharacterDatabase.Query("SELECT FROM_UNIXTIME(active, '%Y-%m-%d..%H:%i:%s') as bandate, unbandate - bandate, active, unbandate, banreason, bannedby FROM character_banned WHERE guid={};", playerTarget->GetGUID().GetCounter());
                 //                                                           0      1      2     3
-                QueryResult resultLDB = CharacterDatabase.Query("SELECT accountId, type, time, data FROM account_data WHERE `data` LIKE '%CastSpellByName%' AND accountID='{}';", playerTarget->GetSession()->GetAccountId());
+                QueryResult resultLDB = CharacterDatabase.Query("SELECT accountId, type, time, data FROM account_data WHERE `data` LIKE '%CastSpellByName%' AND accountId ='{}';", playerTarget->GetSession()->GetAccountId());
 
                 handler->PSendSysMessage("-----------------------------------------------------------------");
                 handler->PSendSysMessage("Information about player %s", player->GetName().c_str());
