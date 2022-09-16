@@ -124,6 +124,7 @@ class AnticheatMgr
         void AntiSwimHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
         void AntiKnockBackHackDetection(Player* player, MovementInfo movementInfo);
         void NoFallDamageDetection(Player* player, MovementInfo movementInfo);
+        void BGreport(Player* player);
         void BGStartExploit(Player* player, MovementInfo movementInfo);
         void BuildReport(Player* player,uint16 reportType);
         bool MustCheckTempReports(uint8 type);
