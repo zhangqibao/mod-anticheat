@@ -32,7 +32,7 @@
 #include "GameTime.h"
 
 Seconds resetTime = 0s;
-Seconds lastIterationPlayer = GameTime::GetUptime() + 30s; //TODO: change 30 secs static to a configurable option
+Seconds lastIterationPlayer = GameTime::GetUptime() + Seconds(sConfigMgr->GetOption<uint32>("Anticheat.SaveReportsTime", 60));
 
 class AnticheatPlayerScript : public PlayerScript
 {

@@ -933,7 +933,6 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                     {
                         sAnticheatMgr->BGreport(player);
                     }
-
                     if (player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionY() > -536.0f)
                     {
                         sAnticheatMgr->BGreport(player);
