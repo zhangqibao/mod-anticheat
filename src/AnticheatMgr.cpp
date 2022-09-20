@@ -948,7 +948,6 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
             {
                 sAnticheatMgr->BGreport(player);
             }
-
             if (Battleground* bg = player->GetBattleground())
             {
                 if (bg->GetStatus() == STATUS_WAIT_JOIN)
