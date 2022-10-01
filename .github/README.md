@@ -1,6 +1,6 @@
 ﻿# ![logo](https://raw.githubusercontent.com/azerothcore/azerothcore.github.io/master/images/logo-github.png) AzerothCore
 
-[English](README.md) | [Español](README_ES.md) | [Svenska](README_SE.md)
+[English](README.md) | [Español](README_ES.md) | [Svenska](README_SE.md) | [Portuguese](README_pt_BR.md)
 
 ## Anticheat Module
 
