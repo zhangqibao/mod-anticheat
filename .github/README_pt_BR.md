@@ -52,4 +52,3 @@ Se você precisar alterar a configuração do módulo, vá para a pasta de confi
 - [x] LOCALE_esES = 6
 - [x] LOCALE_esMX = 7
 - [ ] LOCALE_ruRU = 8
-- [x] LOCALE_ptBR = 9
