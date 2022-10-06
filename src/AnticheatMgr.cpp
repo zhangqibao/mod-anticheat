@@ -357,7 +357,7 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
     if (player->HasAuraType(SPELL_AURA_WATER_BREATHING))
         return;
 
-    if(player->HasAuraType(SPELL_AURA_GHOST))
+    if (player->HasAuraType(SPELL_AURA_GHOST))
         return;
 
     ObjectGuid key = player->GetGUID();
