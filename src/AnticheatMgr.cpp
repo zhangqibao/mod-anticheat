@@ -351,7 +351,13 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
     if (player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
         return;
 
-    if (player->HasAuraType(SPELL_AURA_WATER_WALK) || player->HasAuraType(SPELL_AURA_WATER_BREATHING) || player->HasAuraType(SPELL_AURA_GHOST))
+    if (player->HasAuraType(SPELL_AURA_WATER_WALK))
+        return;
+
+    if (player->HasAuraType(SPELL_AURA_WATER_BREATHING))
+        return;
+
+    if(player->HasAuraType(SPELL_AURA_GHOST))
         return;
 
     ObjectGuid key = player->GetGUID();
@@ -695,7 +701,10 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
         return;
 
     // If he is flying we dont need to check
-    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING))
+    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_CAN_FLY))
+        return;
+
+    if (movementInfo.HasMovementFlag(MOVEMENTFLAG_FLYING))
         return;
 
     // If the player is allowed to waterwalk (or he is dead because he automatically waterwalks then) we dont need to check any further
