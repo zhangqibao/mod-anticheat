@@ -106,11 +106,11 @@ Anticheat.StricterDetectJumpHack = 0
 #       hack logging and detection.
 #
 #       Example: AnticheatMgr:: Speed-Hack (Speed Movement at 12% above allowed Server Set rate 8%.)
-#       will be detected since its 4 (default) and higher, but anything 3 and lower will not be flagged.
-#       Default:    4 - (Default)
+#       will be detected since if it is set to 4 (suggested) and higher, but anything 3 and lower will not be flagged.
+#       Default:    0 - (Default)
 #
 
-Anticheat.SpeedLimitTolerance = 4
+Anticheat.SpeedLimitTolerance = 0
 
 #     Automatic Moderation Features
 #

@@ -227,7 +227,7 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
 
     // create a conf to establish a speed limit tolerance over server rate set speed
     // this is done so we can ignore minor violations that are not false positives such as going 1 or 2 over the speed limit
-    _assignedspeeddiff = sConfigMgr->GetOption<uint32>("Anticheat.SpeedLimitTolerance", 4);
+    _assignedspeeddiff = sConfigMgr->GetOption<uint32>("Anticheat.SpeedLimitTolerance", 0);
 
     // We did the (uint32) cast to accept a margin of tolerance for seasonal spells and buffs such as sugar rush
     // We check the last MovementInfo for the falling flag since falling down a hill and sliding a bit triggered a false positive
