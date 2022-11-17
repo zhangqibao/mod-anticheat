@@ -130,6 +130,7 @@ class AnticheatMgr
         bool MustCheckTempReports(uint8 type);
         uint32 _counter = 0;
         uint32 _alertFrequency = 0;
+        uint32 _assignedspeeddiff = 0;
         uint32 _updateCheckTimer = 4000;
         AnticheatPlayersDataMap m_Players;                        ///< Player data
 };
