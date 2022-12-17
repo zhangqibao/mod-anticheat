@@ -213,11 +213,21 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
             LOG_INFO("anticheat.module", "AnticheatMgr:: Time Manipulation - Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
         BuildReport(player, SPEED_HACK_REPORT);
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+        {
+            LOG_INFO("anticheat.module", "ANTICHEAT COUNTER MEASURE:: {} Time Diff Corrected (Map: {}) (possible Out of Order Time Manipulation)", player->GetName(), player->GetMapId());
+        }
         timeDiff = 1;
     }
 
     if (!timeDiff)
+    {
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+        {
+            LOG_INFO("anticheat.module", "ANTICHEAT COUNTER MEASURE:: {} Time Diff Corrected (Map: {}) (possible Zero Time Manipulation)", player->GetName(), player->GetMapId());
+        }
         timeDiff = 1;
+    }
 
     // this is the distance doable by the player in 1 sec, using the time done to move to this point.
     uint32 clientSpeedRate = distance2D * 1000 / timeDiff;
