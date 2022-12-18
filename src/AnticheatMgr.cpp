@@ -500,7 +500,31 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
 
     if (player->duel)
     {
-        if ((xDiff >= 50.0f || yDiff >= 50.0f || (zDiff >= 10.0f && !player->IsFlying() && !player->IsFalling())) && !player->CanTeleport() && !player->HasAuraType(SPELL_AURA_FEATHER_FALL))
+        if ((xDiff >= 50.0f || yDiff >= 50.0f))
+        {
+            Player* opponent = player->duel->Opponent;
+
+            std::string str = "|cFFFFFC00[DUEL ALERT Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Possible Teleport Hack Detected! While Dueling [|cFF60FF00" + std::string(opponent->GetName().c_str()) + "|cFF00FFFF]";
+            WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+            data << str;
+            sWorld->SendGlobalGMMessage(&data);
+            uint32 latency = 0;
+            latency = player->GetSession()->GetLatency();
+            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+            std::string goXYZ2 = ".go xyz " + std::to_string(opponent->GetPositionX()) + " " + std::to_string(opponent->GetPositionY()) + " " + std::to_string(opponent->GetPositionZ() + 1.0f) + " " + std::to_string(opponent->GetMap()->GetId()) + " " + std::to_string(opponent->GetOrientation());
+            uint32 latency2 = 0;
+            latency2 = opponent->GetSession()->GetLatency();
+            sWorld->SendGMText(LANG_ANTICHEAT_DUEL, player->GetName().c_str(), latency, opponent->GetName().c_str(), latency2);
+
+            if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+            {
+                LOG_INFO("anticheat.module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms - IP: {} - GPS Diff X: {} Y: {} Z: {} - Cheat Flagged At: {} - Cheat Flag At: {}", player->GetName(), player->GetGUID().ToString(), opponent->GetName(), latency, player->GetSession()->GetRemoteAddress().c_str(), xDiff, yDiff, zDiff, goXYZ);
+                LOG_INFO("anticheat.module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms - IP: {} - GPS Diff X: {} Y: {} Z: {} - Cheat Flagged At: {} - Cheat Flag At: {}", opponent->GetName(), opponent->GetGUID().ToString(), player->GetName(), latency2, opponent->GetSession()->GetRemoteAddress().c_str(), xDiff, yDiff, zDiff, goXYZ2);
+            }
+            BuildReport(player, TELEPORT_HACK_REPORT);
+            BuildReport(opponent, TELEPORT_HACK_REPORT);
+        }
+        if (zDiff >= 10.0f && !player->IsFlying() && !player->IsFalling() && !player->CanTeleport() && !player->HasAuraType(SPELL_AURA_FEATHER_FALL))
         {
             Player* opponent = player->duel->Opponent;
 
@@ -528,7 +552,42 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
             player->SetCanTeleport(false);
     }
 
-    if ((xDiff >= 50.0f || yDiff >= 50.0f || (zDiff >= 10.0f && !player->IsFlying() && !player->IsFalling())) && !player->CanTeleport() && !player->HasAuraType(SPELL_AURA_FEATHER_FALL))
+    if ((xDiff >= 50.0f || yDiff >= 50.0f))
+    {
+        if (m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForIngameWarnings", 70))
+        {
+            _alertFrequency = sConfigMgr->GetOption<uint32>("Anticheat.AlertFrequency", 5);
+            // So we dont divide by 0 by accident
+            if (_alertFrequency < 1)
+                _alertFrequency = 1;
+            if (++_counter % _alertFrequency == 0)
+            {
+                // display warning at the center of the screen, hacky way?
+                std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Possible Teleport Hack Detected!";
+                WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+                data << str;
+                sWorld->SendGlobalGMMessage(&data);
+                uint32 latency = 0;
+                latency = player->GetSession()->GetLatency();
+                // need better way to limit chat spam
+                if (m_Players[key].GetTotalReports() >= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Min", 70) && m_Players[key].GetTotalReports() <= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Max", 80))
+                {
+                    sWorld->SendGMText(LANG_ANTICHEAT_TELEPORT, player->GetName().c_str(), player->GetName().c_str(), latency, xDiff, yDiff, zDiff);
+                }
+                _counter = 0;
+            }
+        }
+        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+        {
+            uint32 latency = 0;
+            latency = player->GetSession()->GetLatency();
+            std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
+            LOG_INFO("anticheat.module", "AnticheatMgr:: Teleport-Hack detected player {} ({}) - Latency: {} ms - IP: {} - GPS Diff X: {} Y: {} Z: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), xDiff, yDiff, zDiff, goXYZ);
+        }
+
+        BuildReport(player, TELEPORT_HACK_REPORT);
+    }
+    if (zDiff >= 10.0f && !player->IsFlying() && !player->IsFalling() && !player->CanTeleport() && !player->HasAuraType(SPELL_AURA_FEATHER_FALL))
     {
         if (m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForIngameWarnings", 70))
         {
