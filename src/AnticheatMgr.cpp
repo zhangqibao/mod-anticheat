@@ -500,7 +500,7 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
 
     if (player->duel)
     {
-        if ((xDiff >= 50.0f || yDiff >= 50.0f || (zDiff >= 10.0f && !player->IsFlying() && !player->IsFalling())) && !player->CanTeleport())
+        if ((xDiff >= 50.0f || yDiff >= 50.0f || (zDiff >= 10.0f && !player->IsFlying() && !player->IsFalling())) && !player->CanTeleport() && !player->HasAuraType(SPELL_AURA_FEATHER_FALL))
         {
             Player* opponent = player->duel->Opponent;
 
@@ -528,7 +528,7 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
             player->SetCanTeleport(false);
     }
 
-    if ((xDiff >= 50.0f || yDiff >= 50.0f || (zDiff >= 10.0f && !player->IsFlying() && !player->IsFalling())) && !player->CanTeleport())
+    if ((xDiff >= 50.0f || yDiff >= 50.0f || (zDiff >= 10.0f && !player->IsFlying() && !player->IsFalling())) && !player->CanTeleport() && !player->HasAuraType(SPELL_AURA_FEATHER_FALL))
     {
         if (m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForIngameWarnings", 70))
         {
@@ -548,7 +548,7 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
                 // need better way to limit chat spam
                 if (m_Players[key].GetTotalReports() >= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Min", 70) && m_Players[key].GetTotalReports() <= sConfigMgr->GetOption<uint32>("Anticheat.ReportinChat.Max", 80))
                 {
-                    sWorld->SendGMText(LANG_ANTICHEAT_TELEPORT, player->GetName().c_str(), latency);
+                    sWorld->SendGMText(LANG_ANTICHEAT_TELEPORT, player->GetName().c_str(), player->GetName().c_str(), latency, xDiff, yDiff, zDiff);
                 }
                 _counter = 0;
             }
