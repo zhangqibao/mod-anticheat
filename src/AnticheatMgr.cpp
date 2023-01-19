@@ -1412,7 +1412,12 @@ void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
         data << str;
         sWorld->SendGlobalGMMessage(&data);
 
-        WorldLocation loc = WorldLocation(1, 16226.5f, 16403.6f, -64.5f, 3.2f); // GM Jail Location
+        // GM Jail Location is uncommit and used as default for the jailing. Feel free to commit it out with double forward slashes (//) and uncommit,
+        // removing the double forward slashes (//) if you wish to use the other locations.
+        WorldLocation loc = WorldLocation(1, 16226.5f, 16403.6f, -64.5f, 3.2f);// GM Jail Location
+        //WorldLocation loc = WorldLocation(35, -98.0155, 149.8360,-40.3827, 3.2f);// Alliance Jail Stormwind Stockade Location
+        //WorldLocation loc = WorldLocation(0, -11139.1845, -1742.4421, -29.7365, 3.2f);// Horde Jail The Pit of Criminals Location
+
         player->TeleportTo(loc);
         player->SetHomebind(loc, 876); // GM Jail Homebind location
         player->CastSpell(player, SHACKLES); // Shackle him in place to ensure no exploit happens for jail break attempt
