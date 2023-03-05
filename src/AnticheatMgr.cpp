@@ -1,7 +1,7 @@
 /*
  *MIT License
  *
- *Copyright (c) 2022 Azerothcore
+ *Copyright (c) 2023 Azerothcore
  *
  *Permission is hereby granted, free of charge, to any person obtaining a copy
  *of this software and associated documentation files (the "Software"), to deal
@@ -95,6 +95,13 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
         m_Players[key].SetLastOpcode(opcode);
         return;
     }
+
+    // Dear future me. Please forgive me.
+    // I can't even begin to express how sorry I am for this order
+    // If you bought this you have been scammed.
+    // Visit AC: https://discord.com/invite/kZnFt47U for help on the Open Source Anticheat
+    // The project compromised of various developers of the open source scene and we hang out there.
+    // We would never charge for modules or "lessons"
 
     SpeedHackDetection(player, movementInfo);
     FlyHackDetection(player, movementInfo);
