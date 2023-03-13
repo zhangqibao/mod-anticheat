@@ -363,7 +363,7 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
             return;
 
         //Celestial Planetarium Observer Battle has a narrow path that false flags
-        if (player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
+        if (!player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
             return;
 
         if (m_Players[key].GetLastOpcode() == MSG_MOVE_JUMP && !player->IsFalling())
@@ -405,7 +405,7 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
         return;
 
     //Celestial Planetarium Observer Battle has a narrow path that false flags
-    if (player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
+    if (!player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
         return;
 
     if (player->HasAuraType(SPELL_AURA_WATER_WALK))
@@ -795,7 +795,7 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
         return;
 
     //Celestial Planetarium Observer Battle has a narrow path that false flags
-    if (player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
+    if (!player && GetWMOAreaTableEntryByTripple(5202, 0, 24083))
         return;
 
     // We want to exclude this LiquidStatus from detection because it leads to false positives on boats, docks etc.
