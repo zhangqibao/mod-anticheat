@@ -345,13 +345,12 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
         {
             LOG_INFO("anticheat.module", "ANTICHEAT COUNTER MEASURE:: {} Flight Hack Countered", player->GetName());
         }
+        if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
+        {
+            std::string str = "|cFFFFFC00 FLY HACK COUNTER MEASURE ALERT";
+            sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str.c_str(), player->GetName().c_str(), player->GetName().c_str());
+        }
         BuildReport(player, FLY_HACK_REPORT);
-    }
-
-    if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
-    {
-        std::string str = "|cFFFFFC00 FLY HACK COUNTER MEASURE ALERT";
-        sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str.c_str(), player->GetName().c_str(), player->GetName().c_str());
     }
 
     BuildReport(player, FLY_HACK_REPORT);
