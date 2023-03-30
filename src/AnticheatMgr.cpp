@@ -341,10 +341,11 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
         cheater << cheatertarget->GetPackGUID();
         cheater << uint32(0);
         cheatertarget->SendMessageToSet(&cheater, true);
-        if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
+        if (sConfigMgr->GetOption<bool>("Anticheat.CM.WriteLog", true))
         {
             LOG_INFO("anticheat.module", "ANTICHEAT COUNTER MEASURE:: {} Flight Hack Countered", player->GetName());
         }
+        BuildReport(player, FLY_HACK_REPORT);
     }
 
     if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
