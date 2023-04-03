@@ -343,7 +343,7 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
         cheatertarget->SendMessageToSet(&cheater, true);
         if (sConfigMgr->GetOption<bool>("Anticheat.CM.WriteLog", true))
         {
-            LOG_INFO("anticheat.module", "ANTICHEAT COUNTER MEASURE:: {} Flight Hack Countered", player->GetName());
+            LOG_INFO("anticheat.module", "ANTICHEAT COUNTER MEASURE:: {} Flight Hack Countered and has Opcode set to SMSG_MOVE_UNSET_CAN_FLY", player->GetName());
         }
         if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
         {
@@ -382,6 +382,28 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
             std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
             LOG_INFO("anticheat.module", "AnticheatMgr:: Jump-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
+        if (sConfigMgr->GetOption<bool>("Anticheat.CM.JUMPHACK", true))
+        {   // display warning at the center of the screen, hacky way?
+            std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] JUMP HACK COUNTER MEASURE ALERT";
+            WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+            data << str;
+            sWorld->SendGlobalGMMessage(&data);
+
+            Player* cheatertarget = player->GetSession()->GetPlayer();
+
+            cheatertarget->GetMotionMaster()->MoveFall();
+
+            if (sConfigMgr->GetOption<bool>("Anticheat.CM.WriteLog", true))
+            {
+                LOG_INFO("anticheat.module", "ANTICHEAT COUNTER MEASURE:: {} JUMP Hack Countered and has been set to fall.", player->GetName());
+            }
+            if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
+            {
+                std::string str = "|cFFFFFC00 JUMP HACK COUNTER MEASURE ALERT";
+                sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str.c_str(), player->GetName().c_str(), player->GetName().c_str());
+            }
+            BuildReport(player, JUMP_HACK_REPORT);
+        }
         BuildReport(player, JUMP_HACK_REPORT);
     }
     else if (no_fly_auras && no_fly_flags && no_swim_water)
@@ -419,6 +441,28 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
                 latency = player->GetSession()->GetLatency();
                 std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
                 LOG_INFO("anticheat.module", "AnticheatMgr:: Stricter Check Jump-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
+            }
+            if (sConfigMgr->GetOption<bool>("Anticheat.CM.ADVJUMPHACK", true))
+            {   // display warning at the center of the screen, hacky way?
+                std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] ADVANCE JUMP HACK COUNTER MEASURE ALERT";
+                WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+                data << str;
+                sWorld->SendGlobalGMMessage(&data);
+
+                Player* cheatertarget = player->GetSession()->GetPlayer();
+
+                cheatertarget->GetMotionMaster()->MoveFall();
+
+                if (sConfigMgr->GetOption<bool>("Anticheat.CM.WriteLog", true))
+                {
+                    LOG_INFO("anticheat.module", "ANTICHEAT COUNTER MEASURE:: {} ADVANCE JUMP Hack Countered and has been set to fall.", player->GetName());
+                }
+                if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
+                {
+                    std::string str = "|cFFFFFC00 JUMP HACK COUNTER MEASURE ALERT";
+                    sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str.c_str(), player->GetName().c_str(), player->GetName().c_str());
+                }
+                BuildReport(player, JUMP_HACK_REPORT);
             }
             BuildReport(player, JUMP_HACK_REPORT);
         }
@@ -873,7 +917,28 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
             std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
             LOG_INFO("anticheat.module", "AnticheatMgr:: Ignore Zaxis Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
- 
+        if (sConfigMgr->GetOption<bool>("Anticheat.CM.IGNOREZ", true))
+        {   // display warning at the center of the screen, hacky way?
+            std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] IGNORE-Z HACK COUNTER MEASURE ALERT";
+            WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+            data << str;
+            sWorld->SendGlobalGMMessage(&data);
+
+            Player* cheatertarget = player->GetSession()->GetPlayer();
+
+            cheatertarget->GetMotionMaster()->MoveFall();
+
+            if (sConfigMgr->GetOption<bool>("Anticheat.CM.WriteLog", true))
+            {
+                LOG_INFO("anticheat.module", "ANTICHEAT COUNTER MEASURE:: {} IGNORE-Z Hack Countered and has been set to fall.", player->GetName());
+            }
+            if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
+            {
+                std::string str = "|cFFFFFC00 IGNORE-Z HACK COUNTER MEASURE ALERT";
+                sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str.c_str(), player->GetName().c_str(), player->GetName().c_str());
+            }
+            BuildReport(player, ZAXIS_HACK_REPORT);
+        }
         BuildReport(player, ZAXIS_HACK_REPORT);
     }
  
