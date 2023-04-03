@@ -45,7 +45,8 @@ enum Spells
     LFG_SPELL_DUNGEON_DESERTER = 71041,
     BG_SPELL_DESERTER = 26013,
     SILENCED = 23207,
-    RESURRECTION_SICKNESS = 15007
+    RESURRECTION_SICKNESS = 15007,
+    SLOWDOWN = 61458
 };
 
 AnticheatMgr::AnticheatMgr()
@@ -286,6 +287,28 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
                     latency = player->GetSession()->GetLatency();
                     std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
                     LOG_INFO("anticheat.module", "AnticheatMgr:: Speed-Hack (Speed Movement at {}% above allowed Server Set rate {}%.) detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", clientSpeedRate, speedRate, player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
+                }
+                if (sConfigMgr->GetOption<bool>("Anticheat.CM.SPEEDHACK", true))
+                {   // display warning at the center of the screen, hacky way?
+                    std::string str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] SPEED HACK COUNTER MEASURE ALERT";
+                    WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+                    data << str;
+                    sWorld->SendGlobalGMMessage(&data);
+
+                    if (Aura* slowcheater = player->AddAura(SLOWDOWN, player))// SLOWDOWN
+                    {
+                        slowcheater->SetDuration(1000);
+                    }
+                    BuildReport(player, SPEED_HACK_REPORT);
+                    if (sConfigMgr->GetOption<bool>("Anticheat.CM.WriteLog", true))
+                    {
+                        LOG_INFO("anticheat.module", "ANTICHEAT COUNTER MEASURE:: {} Speed Hack Countered and has been set to Server Rate.", player->GetName());
+                    }
+                    if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
+                    {
+                        std::string str = "|cFFFFFC00 SPEED HACK COUNTER MEASURE ALERT";
+                        sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str.c_str(), player->GetName().c_str(), player->GetName().c_str());
+                    }
                 }
                 BuildReport(player, SPEED_HACK_REPORT);
             }

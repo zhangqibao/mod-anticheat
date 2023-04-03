@@ -225,6 +225,16 @@ Anticheat.CM.ADVJUMPHACK = 0
 Anticheat.CM.IGNOREZ = 0
 
 #
+#     Anticheat.CM.SPEEDHACK
+#
+#       Description: Sets player back to allowed server rate speed when speed hack is detected
+#       Default:    0 - (Disabled)
+#                   1 - (Enabled)
+#
+
+Anticheat.CM.SPEEDHACK = 0
+
+#
 #     Anticheat.CM.WriteLog
 #
 #       Description: Enables Logging
