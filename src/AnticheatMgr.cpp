@@ -105,12 +105,12 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
     // The project compromised of various developers of the open source scene and we hang out there.
     // We would never charge for modules or "lessons"
 
+    TeleportHackDetection(player, movementInfo);
     SpeedHackDetection(player, movementInfo);
     FlyHackDetection(player, movementInfo);
     JumpHackDetection(player, movementInfo, opcode);
     TeleportPlaneHackDetection(player, movementInfo, opcode);
     ClimbHackDetection(player, movementInfo, opcode);
-    TeleportHackDetection(player, movementInfo);
     IgnoreControlHackDetection(player, movementInfo, opcode);
     GravityHackDetection(player, movementInfo);
     if (player->GetLiquidData().Status == LIQUID_MAP_WATER_WALK)
