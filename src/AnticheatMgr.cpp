@@ -98,13 +98,6 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
         return;
     }
 
-    // Dear future me. Please forgive me.
-    // I can't even begin to express how sorry I am for this order
-    // If you bought this you have been scammed.
-    // Visit AC: https://discord.com/invite/kZnFt47U for help on the Open Source Anticheat
-    // The project compromised of various developers of the open source scene and we hang out there.
-    // We would never charge for modules or "lessons"
-
     TeleportHackDetection(player, movementInfo);
     SpeedHackDetection(player, movementInfo);
     FlyHackDetection(player, movementInfo);
@@ -524,7 +517,6 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
             }
             BuildReport(player, JUMP_HACK_REPORT);
         }
-
     }
 }
 
@@ -595,7 +587,6 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
 
         BuildReport(player, TELEPORT_PLANE_HACK_REPORT);
     }
-
 }
 
 void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
@@ -735,7 +726,6 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
         }
         else if (player->CanTeleport())
             player->SetCanTeleport(false);
-
     }
 
     if ((xDiff >= 50.0f || yDiff >= 50.0f) && !player->CanTeleport() && !player->IsBeingTeleported())
@@ -796,7 +786,6 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
     }
     else if (player->CanTeleport())
         player->SetCanTeleport(false);
-
 }
 
 void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
@@ -934,7 +923,6 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo movemen
         {
             return;
         }
-
     }
     else if (!m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_WATERWALKING) && !movementInfo.HasMovementFlag(MOVEMENTFLAG_WATERWALKING))
     {
@@ -1064,7 +1052,6 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
         }
         BuildReport(player, ZAXIS_HACK_REPORT);
     }
- 
 }
 
 // basic detection
@@ -1104,7 +1091,6 @@ void AnticheatMgr::AntiSwimHackDetection(Player* player, MovementInfo movementIn
         }
 
         BuildReport(player, ANTISWIM_HACK_REPORT);
-
     }
 }
 
@@ -1114,12 +1100,12 @@ void AnticheatMgr::AntiKnockBackHackDetection(Player* player, MovementInfo movem
     if (!sConfigMgr->GetOption<bool>("Anticheat.AntiKnockBack", true))
         return;
 
-    ObjectGuid key = player->GetGUID();
-
     //if a knockback helper is not passed then we ignore
     //if player has root state we ignore, knock back does not break root
     if (!player->CanKnockback() || player->HasUnitState(UNIT_STATE_ROOT))
         return;
+
+    ObjectGuid key = player->GetGUID();
 
     if (movementInfo.pos == m_Players[key].GetLastMovementInfo().pos)
     {
@@ -1226,14 +1212,11 @@ Position const* AnticheatMgr::GetTeamStartPosition(TeamId teamId) const
 
 void AnticheatMgr::CheckStartPositions(Player* player)
 {
-    if (!sConfigMgr->GetOption<bool>("Anticheat.BG.StartAreaTeleport", true))
-        return;
-
-    Position pos = player->GetPosition();
-    Position const* startPos = GetTeamStartPosition(player->GetBgTeamId());
-
     if (sConfigMgr->GetOption<bool>("Anticheat.BG.StartAreaTeleport", true))
     {
+        Position pos = player->GetPosition();
+        Position const* startPos = GetTeamStartPosition(player->GetBgTeamId());
+
         if (pos.GetExactDistSq(!startPos))
         {
             if (sConfigMgr->GetOption<bool>("Anticheat.CM.WriteLog", true))
@@ -1408,9 +1391,8 @@ void AnticheatMgr::HandlePlayerLogin(Player* player)
     CharacterDatabase.Execute("DELETE FROM players_reports_status WHERE guid={}", player->GetGUID().GetCounter());
     // we initialize the pos of lastMovementPosition var.
     m_Players[player->GetGUID()].SetPosition(player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation());
-    QueryResult resultDB = CharacterDatabase.Query("SELECT * FROM daily_players_reports WHERE guid={};", player->GetGUID().GetCounter());
 
-    if (resultDB)
+    if (CharacterDatabase.Query("SELECT 0 FROM daily_players_reports WHERE guid={};", player->GetGUID().GetCounter()))
         m_Players[player->GetGUID()].SetDailyReportState(true);
 }
 
@@ -1539,17 +1521,6 @@ bool AnticheatMgr::MustCheckTempReports(uint8 type)
 
     return true;
 }
-
-//
-// Dear maintainer:
-//
-// Once you are done trying to 'optimize' this script,
-// and have identify potentionally if there was a terrible
-// mistake that was here or not, please increment the
-// following counter as a warning to the next guy:
-//
-// total_hours_wasted_here = 42
-//
 
 void AnticheatMgr::BuildReport(Player* player, uint16 reportType)
 {
