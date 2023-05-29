@@ -88,12 +88,12 @@ void AnticheatData::SetTotalReports(uint32 _totalReports)
     totalReports = _totalReports;
 }
 
-void AnticheatData::SetTypeReports(uint32 type, uint32 amount)
+void AnticheatData::SetTypeReports(uint8 type, uint32 amount)
 {
     typeReports[type] = amount;
 }
 
-uint32 AnticheatData::GetTypeReports(uint32 type) const
+uint32 AnticheatData::GetTypeReports(uint8 type) const
 {
     return typeReports[type];
 }

@@ -71,19 +71,29 @@ public:
         return commandTable;
     }
 
+    static Optional<PlayerIdentifier> TrySolvePlayer(ChatHandler* handler, Optional<PlayerIdentifier> player)
+    {
+        if (!player)
+            player = PlayerIdentifier::FromTarget(handler);
+
+        if (!player || !player->IsConnected())
+        {
+            handler->SendSysMessage(LANG_PLAYER_NOT_FOUND);
+            handler->SetSentErrorMessage(true);
+            return std::nullopt;
+        }
+
+        return player;
+    }
+
     static bool HandleAnticheatWarnCommand(ChatHandler* handler, Optional<PlayerIdentifier> player)
     {
         if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
             return false;
 
+        player = TrySolvePlayer(handler, player);
         if (!player)
-            player = PlayerIdentifier::FromTarget(handler);
-        if (!player || !player->IsConnected())
-        {
-            handler->SendSysMessage(LANG_PLAYER_NOT_FOUND);
-            handler->SetSentErrorMessage(true);
             return false;
-        }
 
         ChatHandler(player->GetConnectedPlayer()->GetSession()).SendSysMessage("The anticheat system has reported several times that you may be cheating. You will be monitored to confirm if this is accurate.");
         return true;
@@ -94,14 +104,9 @@ public:
         if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
             return false;
 
+        player = TrySolvePlayer(handler, player);
         if (!player)
-            player = PlayerIdentifier::FromTarget(handler);
-        if (!player || !player->IsConnected())
-        {
-            handler->SendSysMessage(LANG_PLAYER_NOT_FOUND);
-            handler->SetSentErrorMessage(true);
             return false;
-        }
 
         Player* pTarget = player->GetConnectedPlayer();
 
@@ -141,14 +146,9 @@ public:
         if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
             return false;
 
+        player = TrySolvePlayer(handler, player);
         if (!player)
-            player = PlayerIdentifier::FromTarget(handler);
-        if (!player || !player->IsConnected())
-        {
-            handler->SendSysMessage(LANG_PLAYER_NOT_FOUND);
-            handler->SetSentErrorMessage(true);
             return false;
-        }
 
         Player* pTarget = player->GetConnectedPlayer();
 
@@ -177,14 +177,10 @@ public:
         if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
             return false;
 
+        player = TrySolvePlayer(handler, player);
         if (!player)
-            player = PlayerIdentifier::FromTarget(handler);
-        if (!player || !player->IsConnected())
-        {
-            handler->SendSysMessage(LANG_PLAYER_NOT_FOUND);
-            handler->SetSentErrorMessage(true);
             return false;
-        }
+
         sAnticheatMgr->AnticheatDeleteCommand(player->GetGUID());
         handler->PSendSysMessage("Anticheat players_reports_status deleted for player %s", player->GetName());
         return true;
@@ -195,16 +191,9 @@ public:
         if (!sConfigMgr->GetOption<bool>("Anticheat.Enabled", 0))
             return false;
 
+        player = TrySolvePlayer(handler, player);
         if (!player)
-        {
-            player = PlayerIdentifier::FromTarget(handler);
-        }
-        if (!player || !player->IsConnected())
-        {
-            handler->SendSysMessage(LANG_PLAYER_NOT_FOUND);
-            handler->SetSentErrorMessage(true);
             return false;
-        }
 
         if (Player* playerTarget = player->GetConnectedPlayer())
         {
@@ -244,7 +233,7 @@ public:
             handler->PSendSysMessage(ipAndLatencyTemplate, playerTarget->GetSession()->GetRemoteAddress(), latency);
 
             //                                                       0            1           2
-            QueryResult resultADB = LoginDatabase.Query("SELECT `unbandate`, `banreason`, `bannedby` FROM `account_banned` WHERE `id` = {} ORDER BY bandate ASC", playerTarget->GetSession()->GetAccountId());
+            QueryResult resultADB = LoginDatabase.Query("SELECT `unbandate`, `banreason`, `bannedby` FROM `account_banned` WHERE `id` = {} ORDER BY `bandate` ASC", playerTarget->GetSession()->GetAccountId());
             if (resultADB)
             {
                 do

@@ -46,8 +46,8 @@ public:
     uint32 GetTotalReports() const;
     void SetTotalReports(uint32 _totalReports);
 
-    uint32 GetTypeReports(uint32 type) const;
-    void SetTypeReports(uint32 type, uint32 amount);
+    uint32 GetTypeReports(uint8 type) const;
+    void SetTypeReports(uint8 type, uint32 amount);
 
     float GetAverage() const;
     void SetAverage(float _average);
