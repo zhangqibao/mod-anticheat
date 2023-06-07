@@ -41,6 +41,12 @@ constexpr auto ALLOWED_ACK_LAG = 2000;
 
 enum Spells : uint32
 {
+    BLINK = 1953,
+    BLINK_COOLDOWN_REDUCTION = 23025,       // Reduces Blink cooldown by 2 seconds.
+    GLYPH_OF_BLINK = 56365,                 // Increases Blink distance by 5 yards.
+    SHADOWSTEP = 36554,
+    FILTHY_TRICKS_RANK_1 = 58414,           // Reduces Shadowstep cooldown by 5 seconds.
+    FILTHY_TRICKS_RANK_2 = 58415,           // Reduces Shadowstep cooldown by 10 seconds.
     SHACKLES = 38505,
     LFG_SPELL_DUNGEON_DESERTER = 71041,
     BG_SPELL_DESERTER = 26013,
@@ -93,8 +99,7 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
 
     if (player->IsInFlight() || player->GetTransport() || player->GetVehicle())
     {
-        m_Players[key].SetLastMovementInfo(movementInfo);
-        m_Players[key].SetLastOpcode(opcode);
+        m_Players[key].SetLastInformations(movementInfo, opcode, GetPlayerCurrentSpeedRate(player));
         return;
     }
 
@@ -127,8 +132,57 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
             BGStartExploit(player, movementInfo);
         }
     }
-    m_Players[key].SetLastMovementInfo(movementInfo);
-    m_Players[key].SetLastOpcode(opcode);
+    m_Players[key].SetLastInformations(movementInfo, opcode, GetPlayerCurrentSpeedRate(player));
+}
+
+uint32 AnticheatMgr::GetTeleportSkillCooldownDurationInMS(Player* player) const
+{
+    switch (player->getClass())
+    {
+        case CLASS_ROGUE:
+            if (player->HasAura(FILTHY_TRICKS_RANK_2))
+                return 20000u;
+            else if (player->HasAura(FILTHY_TRICKS_RANK_1))
+                return 25000u;
+            return 30000u;
+        case CLASS_MAGE:
+            if (player->HasAura(BLINK_COOLDOWN_REDUCTION)) // Bonus from Vanilla/Early TBC pvp gear.
+                return 13000u;
+            return 15000u;
+        default:
+            return 0u;
+    }
+}
+
+float AnticheatMgr::GetTeleportSkillDistanceInYards(Player* player) const
+{
+    switch (player->getClass())
+    {
+        case CLASS_ROGUE: // The rogue's teleport spell is Shadowstep.
+            return 25.0f; // Synful-Syn: Help needed! At least, 25 yards adjustment is better than nothing!
+            // The spell can be casted at a maximum of 25 yards from the middle of the ennemy and teleports the player a short distance behind the target which might be over 25 yards, especially when the target is facing the rogue.
+            // Using Shadowstep on Onyxia at as far as I could moved me by 44 yards. Doing it on a blood elf in duel moved me 29 yards.
+        case CLASS_MAGE: // The mage's teleport spell is Blink.
+            if (player->HasAura(GLYPH_OF_BLINK))
+                return 25.1f; // Includes a 0.1 miscalculation margin.
+            return 20.1f; // Includes a 0.1 miscalculation margin.
+        default:
+            return 0.0f;
+    }
+}
+
+// Get how many yards the player can move in a second.
+float AnticheatMgr::GetPlayerCurrentSpeedRate(Player* player) const
+{
+    // we need to know HOW is the player moving
+    // TO-DO: Should we check the incoming movement flags?
+    if (player->HasUnitMovementFlag(MOVEMENTFLAG_SWIMMING))
+        return player->GetSpeed(MOVE_SWIM);
+    else if (player->IsFlying())
+        return player->GetSpeed(MOVE_FLIGHT);
+    else if (player->HasUnitMovementFlag(MOVEMENTFLAG_WALKING))
+        return player->GetSpeed(MOVE_WALK);
+    return player->GetSpeed(MOVE_RUN);
 }
 
 void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
@@ -179,31 +233,19 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
         }
     }
 
-    uint32 distance2D = (uint32)movementInfo.pos.GetExactDist2d(&m_Players[key].GetLastMovementInfo().pos);
+    float distance2D = movementInfo.pos.GetExactDist2d(&m_Players[key].GetLastMovementInfo().pos);
 
     // We don't need to check for a speedhack if the player hasn't moved
     // This is necessary since MovementHandler fires if you rotate the camera in place
     if (!distance2D)
         return;
 
-    // we need to know HOW is the player moving
-    // TO-DO: Should we check the incoming movement flags?
-    UnitMoveType moveType;
-    if (player->HasUnitMovementFlag(MOVEMENTFLAG_SWIMMING))
-        moveType = MOVE_SWIM;
-    else if (player->IsFlying())
-        moveType = MOVE_FLIGHT;
-    else if (player->HasUnitMovementFlag(MOVEMENTFLAG_WALKING))
-        moveType = MOVE_WALK;
-    else
-        moveType = MOVE_RUN;
-
-    // how many yards the player can do in one sec.
-    // We remove the added speed for jumping because otherwise permanently jumping doubles your allowed speed
-    uint32 speedRate = (uint32)(player->GetSpeed(moveType));
-
     // how long the player took to move to here.
     uint32 timeDiff = getMSTimeDiff(m_Players[key].GetLastMovementInfo().time, movementInfo.time);
+
+    float speedRate = GetPlayerCurrentSpeedRate(player);
+    if (timeDiff <= ALLOWED_ACK_LAG)
+        speedRate = std::max(speedRate, m_Players[key].GetLastSpeedRate()); // The player might have been moving with a previously faster speed. This should help mitigate a false positive from loosing a speed increase buff.
 
     if (int32(timeDiff) < 0 && sConfigMgr->GetOption<bool>("Anticheat.CM.TIMEMANIPULATION", true))
     {
@@ -257,19 +299,36 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
         BuildReport(player, COUNTER_MEASURES_REPORT);
     }
 
+    // Adjust distance from Blink/Shadowstep.
+    if (player->HasAura(BLINK) || player->HasAura(SHADOWSTEP))
+    {
+        // Only adjust the travelled distance if the player previously didn't use a movement spell or didn't move at all since they previously used the movement spell.
+        if (!m_Players[key].GetJustUsedMovementSpell() || timeDiff >= GetTeleportSkillCooldownDurationInMS(player))
+        {
+            m_Players[key].SetJustUsedMovementSpell(true);
+            distance2D = std::max(distance2D - GetTeleportSkillDistanceInYards(player), 0.0f);
+        }
+    }
+    else
+    {
+        m_Players[key].SetJustUsedMovementSpell(false);
+    }
+
     // this is the distance doable by the player in 1 sec, using the time done to move to this point.
-    uint32 clientSpeedRate = distance2D * 1000 / timeDiff;
+    float clientSpeedRate = 0.0f;
+    if (float floatTimeDiff = float(timeDiff))
+        clientSpeedRate = distance2D * 1000.0f / floatTimeDiff;
 
     // we create a diff speed in uint32 for further precision checking to avoid legit fall and slide
-    uint32 diffspeed = clientSpeedRate - speedRate;
+    float diffspeed = clientSpeedRate - speedRate;
 
     // create a conf to establish a speed limit tolerance over server rate set speed
     // this is done so we can ignore minor violations that are not false positives such as going 1 or 2 over the speed limit
-    _assignedspeeddiff = sConfigMgr->GetOption<uint32>("Anticheat.SpeedLimitTolerance", 0);
+    float assignedspeeddiff = sConfigMgr->GetOption<float>("Anticheat.SpeedLimitTolerance", 0.0f);
 
     // We did the (uint32) cast to accept a margin of tolerance for seasonal spells and buffs such as sugar rush
     // We check the last MovementInfo for the falling flag since falling down a hill and sliding a bit triggered a false positive
-    if ((diffspeed >= _assignedspeeddiff) && !m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_FALLING))
+    if ((diffspeed >= assignedspeeddiff) && !m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_FALLING))
     {
         if (clientSpeedRate > speedRate * 1.05f)
         {

@@ -131,9 +131,11 @@ class AnticheatMgr
         void BGStartExploit(Player* player, MovementInfo movementInfo);
         void BuildReport(Player* player, ReportTypes reportType);
         bool MustCheckTempReports(ReportTypes type);
+        [[nodiscard]] uint32 GetTeleportSkillCooldownDurationInMS(Player* player) const;
+        [[nodiscard]] float GetTeleportSkillDistanceInYards(Player* player) const;
+        [[nodiscard]] float GetPlayerCurrentSpeedRate(Player* player) const;
         uint32 _counter = 0;
         uint32 _alertFrequency = 0;
-        uint32 _assignedspeeddiff = 0;
         uint32 _updateCheckTimer = 4000;
         uint32 m_MapId;
         std::array<Position, PVP_TEAMS_COUNT> _startPosition;
