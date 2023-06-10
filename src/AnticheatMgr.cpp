@@ -947,20 +947,22 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
         return;
 
     // We exempt select areas found in 335 to prevent false hack hits
-    if (player->GetAreaId())
+    switch (player->GetAreaId())
     {
-        switch (player->GetAreaId())
-        {
-            case 4273: //Celestial Planetarium Observer Battle has a narrow path that false flags
-            case 495:  //Ring of Judgement just being in the area false flags
-            case 4161: //Wymrest Temple just being in the area false flags
-            case 10: // Duskwood bridge
-            case 40: // Westfall bridge
-            case 321: // Hammerfall wooden balcony
-                return;
-        }
+        case 10:    // Duskwood bridge
+        case 40:    // Westfall bridge
+        case 321:   // Hammerfall wooden balcony
+        case 495:   // Ring of Judgement just being in the area false flags
+        case 721:   // Gnomeregan, some corridor inside the instance, .go xyz -466.640076 260.263092 -208.009796
+        case 796:   // Scarlet Monastery, armory, .go xyz 1744.680786 -364.786957 8.011654
+        case 3789:  // Shadow Labyrinth, boxes inside the instance, .go xyz -409.122559 -120.865135 15.713029
+        case 3847:  // Botanica, Laj's platform, .go xyz -204.576462 391.573334 -11.178043
+        case 4161:  // Wymrest Temple just being in the area false flags
+        case 4273:  // Celestial Planetarium Observer Battle has a narrow path that false flags
+            return;
+        default:
+            break;
     }
-
 
     // We want to exclude this LiquidStatus from detection because it leads to false positives on boats, docks etc.
     // Basically everytime you stand on a game object in water
