@@ -100,7 +100,7 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
 
     if (player->IsInFlight() || player->GetTransport() || player->GetVehicle())
     {
-        m_Players[key].SetLastInformations(movementInfo, opcode, GetPlayerCurrentSpeedRate(player));
+        m_Players[key].SetLastInformations(movementInfo, opcode, player->GetMapId(), GetPlayerCurrentSpeedRate(player));
         return;
     }
 
@@ -133,7 +133,7 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
             BGStartExploit(player, movementInfo);
         }
     }
-    m_Players[key].SetLastInformations(movementInfo, opcode, GetPlayerCurrentSpeedRate(player));
+    m_Players[key].SetLastInformations(movementInfo, opcode, player->GetMapId(), GetPlayerCurrentSpeedRate(player));
 }
 
 void AnticheatMgr::SendMiddleScreenGMMessage(std::string str)
@@ -376,10 +376,13 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
 
     ObjectGuid key = player->GetGUID();
 
+    if (m_Players[key].GetLastMapId() != player->GetMapId())
+        return;
+
     // We also must check the map because the movementFlag can be modified by the client.
     // If we just check the flag, they could always add that flag and always skip the speed hacking detection.
 
-    if (m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT) && player->GetMapId())
+    if (m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
     {
         switch (player->GetMapId())
         {
@@ -829,9 +832,6 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
 
     ObjectGuid key = player->GetGUID();
 
-    if (m_Players[key].GetLastMovementInfo().pos.GetPositionX() == movementInfo.pos.GetPositionX())
-        return;
-
     if (m_Players[key].GetLastOpcode() == MSG_DELAY_GHOST_TELEPORT)
         return;
 
@@ -851,7 +851,7 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
     if (player->IsFalling() || (player->IsFalling() && player->IsMounted()))
         return;
 
-    if (m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT) && player->GetMapId())
+    if (m_Players[key].GetLastMovementInfo().HasMovementFlag(MOVEMENTFLAG_ONTRANSPORT))
     {
         switch (player->GetMapId())
         {
@@ -1496,7 +1496,7 @@ void AnticheatMgr::HandlePlayerLogin(Player* player)
     // we must delete this to prevent errors in case of crash
     CharacterDatabase.Execute("DELETE FROM `players_reports_status` WHERE `guid` = {}", player->GetGUID().GetCounter());
     // we initialize the pos of lastMovementPosition var.
-    m_Players[player->GetGUID()].SetPosition(player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation());
+    m_Players[player->GetGUID()].SetPosition(player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), player->GetMapId());
 
     if (CharacterDatabase.Query("SELECT 0 FROM `daily_players_reports` WHERE `guid` = {};", player->GetGUID().GetCounter()))
         m_Players[player->GetGUID()].SetDailyReportState(true);

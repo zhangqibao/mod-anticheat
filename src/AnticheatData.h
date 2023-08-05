@@ -35,7 +35,7 @@ public:
     AnticheatData();
     ~AnticheatData();
 
-    void SetLastInformations(MovementInfo movementInfo, uint32 opcode, float speedRate);
+    void SetLastInformations(MovementInfo movementInfo, uint32 opcode, uint32 mapId, float speedRate);
 
     void SetLastOpcode(uint32 opcode);
     uint32 GetLastOpcode() const;
@@ -43,10 +43,13 @@ public:
     const MovementInfo& GetLastMovementInfo() const;
     void SetLastMovementInfo(MovementInfo& moveInfo);
 
+    [[nodiscard]] uint32 GetLastMapId() const { return lastMapId; }
+    void SetLastMapId(float mapId) { lastMapId = mapId; }
+
     [[nodiscard]] float GetLastSpeedRate() const { return lastSpeedRate; }
     void SetLastSpeedRate(float speedRate) { lastSpeedRate = speedRate; }
 
-    void SetPosition(float x, float y, float z, float o);
+    void SetPosition(float x, float y, float z, float o, uint32 mapId);
 
     uint32 GetTotalReports() const;
     void SetTotalReports(uint32 _totalReports);
@@ -74,6 +77,7 @@ public:
 private:
     uint32 lastOpcode;
     MovementInfo lastMovementInfo;
+    uint32 lastMapId;
     float lastSpeedRate;
     uint32 totalReports;
     uint32 typeReports[MAX_REPORT_TYPES];

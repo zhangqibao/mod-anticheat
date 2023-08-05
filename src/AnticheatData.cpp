@@ -45,10 +45,11 @@ AnticheatData::~AnticheatData()
 {
 }
 
-void AnticheatData::SetLastInformations(MovementInfo movementInfo, uint32 opcode, float speedRate)
+void AnticheatData::SetLastInformations(MovementInfo movementInfo, uint32 opcode, uint32 mapId, float speedRate)
 {
     SetLastMovementInfo(movementInfo);
     SetLastOpcode(opcode);
+    SetLastMapId(mapId);
     SetLastSpeedRate(speedRate);
 }
 
@@ -67,9 +68,10 @@ void AnticheatData::SetLastOpcode(uint32 opcode)
     lastOpcode = opcode;
 }
 
-void AnticheatData::SetPosition(float x, float y, float z, float o)
+void AnticheatData::SetPosition(float x, float y, float z, float o, uint32 mapId)
 {
     lastMovementInfo.pos = { x, y, z, o };
+    SetLastMapId(mapId);
 }
 
 uint32 AnticheatData::GetLastOpcode() const
