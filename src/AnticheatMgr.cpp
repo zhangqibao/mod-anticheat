@@ -28,6 +28,7 @@
 #include "Player.h"
 #include "Configuration/Config.h"
 #include "SpellAuras.h"
+#include "DatabaseEnv.h"
 
 constexpr auto LANG_ANTICHEAT_ALERT = 30087;
 constexpr auto LANG_ANTICHEAT_TELEPORT = 30088;

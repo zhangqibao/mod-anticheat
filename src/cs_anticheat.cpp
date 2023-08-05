@@ -30,6 +30,7 @@
 #include "Configuration/Config.h"
 #include "Player.h"
 #include "SpellAuras.h"
+#include "DatabaseEnv.h"
 
 #if AC_COMPILER == AC_COMPILER_GNU
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
