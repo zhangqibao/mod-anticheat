@@ -308,7 +308,7 @@ void AnticheatMgr::BuildAndSendReportToIngameGameMasters(Player* player, ReportT
     {
         const char* reportName = GetReportNameFromReportType(reportType);
 
-        SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Possible cheater! Report name: " + reportName);
+        SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Possible cheater! Report name: " + reportName);
 
         if (counter >= GetMinimumReportInChatThresholdConfigFromReportType(reportType) && counter <= GetMaximumReportInChatThresholdConfigFromReportType(reportType))
         {
@@ -449,7 +449,7 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
         }
         if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTSCREEN", true))
         {
-            SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] TIME MANIPULATION COUNTER MEASURE ALERT");
+            SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] TIME MANIPULATION COUNTER MEASURE ALERT");
         }
         if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
         {
@@ -469,7 +469,7 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
         }
         if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTSCREEN", true))
         {
-            SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] TIME MANIPULATION COUNTER MEASURE ALERT");
+            SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] TIME MANIPULATION COUNTER MEASURE ALERT");
         }
         if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
         {
@@ -534,7 +534,7 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
                     }
                     if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTSCREEN", true))
                     {
-                        SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] SPEED COUNTER MEASURE ALERT");
+                        SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] SPEED COUNTER MEASURE ALERT");
                     }
                     if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
                     {
@@ -594,7 +594,7 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
         }
         if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTSCREEN", true))
         {
-            SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] FLY HACK COUNTER MEASURE ALERT");
+            SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] FLY HACK COUNTER MEASURE ALERT");
         }
         if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
         {
@@ -643,7 +643,7 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
             }
             if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTSCREEN", true))
             {
-                SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] JUMP HACK COUNTER MEASURE ALERT");
+                SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] JUMP HACK COUNTER MEASURE ALERT");
             }
             if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
             {
@@ -704,7 +704,7 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
                 }
                 if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTSCREEN", true))
                 {
-                    SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] ADVANCE JUMP HACK COUNTER MEASURE ALERT");
+                    SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] ADVANCE JUMP HACK COUNTER MEASURE ALERT");
                 }
                 if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
                 {
@@ -895,7 +895,7 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
         {
             Player* opponent = player->duel->Opponent;
 
-            SendMiddleScreenGMMessage("|cFFFFFC00[DUEL ALERT Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Possible Teleport Hack Detected! While Dueling [|cFF60FF00" + opponent->GetName() + "|cFF00FFFF]");
+            SendMiddleScreenGMMessage("|cFFFFFC00[DUEL ALERT |cFF60FF00" + player->GetName() + "|cFF00FFFF] Possible Teleport Hack Detected! While Dueling [|cFF60FF00" + opponent->GetName() + "|cFF00FFFF]");
 
             uint32 latency = player->GetSession()->GetLatency();
             std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
@@ -921,7 +921,7 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
         uint32 alertFrequency = GetAlertFrequencyConfigFromReportType(TELEPORT_HACK_REPORT);
         if (counter % alertFrequency == 0)
         {
-            SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Possible Teleport Hack Detected!");
+            SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Possible Teleport Hack Detected!");
 
             if (counter >= GetMinimumReportInChatThresholdConfigFromReportType(TELEPORT_HACK_REPORT) && counter <= GetMaximumReportInChatThresholdConfigFromReportType(TELEPORT_HACK_REPORT))
             {
@@ -944,7 +944,7 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
             }
             if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTSCREEN", true))
             {
-                SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] TELEPORT HACK COUNTER MEASURE ALERT");
+                SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] TELEPORT HACK COUNTER MEASURE ALERT");
             }
             if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
             {
@@ -994,7 +994,7 @@ void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movem
             uint32 alertFrequency = GetAlertFrequencyConfigFromReportType(IGNORE_CONTROL_REPORT);
             if (counter % alertFrequency == 0)
             {
-                SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Possible Ignore Control Hack Detected!");
+                SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Possible Ignore Control Hack Detected!");
 
                 if (counter >= GetMinimumReportInChatThresholdConfigFromReportType(IGNORE_CONTROL_REPORT) && counter <= GetMaximumReportInChatThresholdConfigFromReportType(IGNORE_CONTROL_REPORT))
                 {
@@ -1162,7 +1162,7 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
             }
             if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTSCREEN", true))
             {
-                SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] IGNORE-Z HACK COUNTER MEASURE ALERT");
+                SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] IGNORE-Z HACK COUNTER MEASURE ALERT");
             }
             if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
             {
@@ -1294,7 +1294,7 @@ void AnticheatMgr::BGreport(Player* player)
     uint32 alertFrequency = GetAlertFrequencyConfigFromReportType(TELEPORT_HACK_REPORT);
     if (counter % alertFrequency == 0)
     {
-        SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Player Outside of Starting SPOT before BG has started!");
+        SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Player Outside of Starting SPOT before BG has started!");
 
         // need better way to limit chat spam
         if (counter >= GetMinimumReportInChatThresholdConfigFromReportType(TELEPORT_HACK_REPORT) && counter <= GetMaximumReportInChatThresholdConfigFromReportType(TELEPORT_HACK_REPORT))
@@ -1335,7 +1335,7 @@ void AnticheatMgr::CheckStartPositions(Player* player)
             }
             if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTSCREEN", true))
             {
-                SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] BG START SPOT COUNTER MEASURE ALERT");
+                SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] BG START SPOT COUNTER MEASURE ALERT");
             }
             if (sConfigMgr->GetOption<bool>("Anticheat.CM.ALERTCHAT", true))
             {
@@ -1677,7 +1677,7 @@ void AnticheatMgr::BuildReport(Player* player, ReportTypes reportType)
             LOG_INFO("anticheat.module", "AnticheatMgr:: Reports reached assigned threshhold and counteracted by kicking player {} ({})", player->GetName(), player->GetGUID().ToString());
         }
 
-        SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Auto Kicked for Reaching Cheat Threshhold!");
+        SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Auto Kicked for Reaching Cheat Threshhold!");
 
         player->GetSession()->KickPlayer(true);
         if (sConfigMgr->GetOption<bool>("Anticheat.AnnounceKick", true))
@@ -1700,7 +1700,7 @@ void AnticheatMgr::BuildReport(Player* player, ReportTypes reportType)
             LOG_INFO("anticheat.module", "AnticheatMgr:: Reports reached assigned threshhold and counteracted by banning player {} ({})", player->GetName(), player->GetGUID().ToString());
         }
 
-        SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Auto Banned Account for Reaching Cheat Threshhold!");
+        SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Auto Banned Account for Reaching Cheat Threshhold!");
 
         std::string accountName;
         AccountMgr::GetName(player->GetSession()->GetAccountId(), accountName);
@@ -1726,7 +1726,7 @@ void AnticheatMgr::BuildReport(Player* player, ReportTypes reportType)
             LOG_INFO("anticheat.module", "AnticheatMgr:: Reports reached assigned threshhold and counteracted by jailing player {} ({})", player->GetName(), player->GetGUID().ToString());
         }
 
-        SendMiddleScreenGMMessage("|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Auto Jailed Account for Reaching Cheat Threshhold!");
+        SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Auto Jailed Account for Reaching Cheat Threshhold!");
 
         // GM Jail Location is uncommit and used as default for the jailing. Feel free to commit it out with double forward slashes (//) and uncommit,
         // removing the double forward slashes (//) if you wish to use the other locations.
