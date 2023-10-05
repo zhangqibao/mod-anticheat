@@ -299,7 +299,7 @@ uint32 AnticheatMgr::GetMaximumReportInChatThresholdConfigFromReportType(ReportT
     }
 }
 
-void AnticheatMgr::BuildAndSendReportToIngameGameMasters(Player* player, ReportTypes reportType)
+void AnticheatMgr::BuildAndSendReportToIngameGameMasters(Player* player, ReportTypes reportType, Optional<MovementInfo> optMovementInfo)
 {
     ObjectGuid key = player->GetGUID();
     uint32 counter = m_Players[key].GetTypeReports(reportType);
@@ -307,14 +307,28 @@ void AnticheatMgr::BuildAndSendReportToIngameGameMasters(Player* player, ReportT
     if (counter % GetAlertFrequencyConfigFromReportType(reportType) == 0)
     {
         const char* reportName = GetReportNameFromReportType(reportType);
-
         SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Possible cheater! Report name: " + reportName);
-
         if (counter >= GetMinimumReportInChatThresholdConfigFromReportType(reportType) && counter <= GetMaximumReportInChatThresholdConfigFromReportType(reportType))
         {
             uint32 latency = player->GetSession()->GetLatency();
             const char* playerName = player->GetName().c_str();
-            sWorld->SendGMText(LANG_ANTICHEAT_ALERT, playerName, playerName, latency, reportName);
+            if (reportType == TELEPORT_HACK_REPORT && optMovementInfo.has_value())
+            {
+                Position lastPosition = m_Players[key].GetLastMovementInfo().pos;
+                Position position = optMovementInfo.value().pos;
+                float xDiff = lastPosition.GetPositionX() - position.GetPositionX();
+                float yDiff = lastPosition.GetPositionY() - position.GetPositionY();
+                float zDiff = lastPosition.GetPositionZ() - position.GetPositionZ();
+                sWorld->SendGMText(LANG_ANTICHEAT_TELEPORT, playerName, playerName, latency, xDiff, yDiff, zDiff);
+            }
+            else if (reportType == IGNORE_CONTROL_REPORT)
+            {
+                sWorld->SendGMText(LANG_ANTICHEAT_IGNORECONTROL, playerName, latency);
+            }
+            else
+            {
+                sWorld->SendGMText(LANG_ANTICHEAT_ALERT, playerName, playerName, latency, reportName);
+            }
         }
     }
 }
@@ -457,7 +471,7 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
             sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str, player->GetName().c_str(), player->GetName().c_str());
         }
         timeDiff = 1;
-        BuildReport(player, COUNTER_MEASURES_REPORT);
+        BuildReport(player, COUNTER_MEASURES_REPORT, movementInfo);
     }
 
     if (!timeDiff && sConfigMgr->GetOption<bool>("Anticheat.CM.TIMEMANIPULATION", true))
@@ -477,7 +491,7 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
             sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str, player->GetName().c_str(), player->GetName().c_str());
         }
         timeDiff = 1;
-        BuildReport(player, COUNTER_MEASURES_REPORT);
+        BuildReport(player, COUNTER_MEASURES_REPORT, movementInfo);
     }
 
     // Adjust distance from Blink/Shadowstep.
@@ -541,9 +555,9 @@ void AnticheatMgr::SpeedHackDetection(Player* player, MovementInfo movementInfo)
                         const char* str = "|cFFFFFC00 SPEED HACK COUNTER MEASURE ALERT";
                         sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str, player->GetName().c_str(), player->GetName().c_str());
                     }
-                    BuildReport(player, COUNTER_MEASURES_REPORT);
+                    BuildReport(player, COUNTER_MEASURES_REPORT, movementInfo);
                 }
-                BuildReport(player, SPEED_HACK_REPORT);
+                BuildReport(player, SPEED_HACK_REPORT, movementInfo);
             }
         }
     }
@@ -601,10 +615,10 @@ void AnticheatMgr::FlyHackDetection(Player* player, MovementInfo  movementInfo)
             const char* str = "|cFFFFFC00 FLY HACK COUNTER MEASURE ALERT";
             sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str, player->GetName().c_str(), player->GetName().c_str());
         }
-        BuildReport(player, COUNTER_MEASURES_REPORT);
+        BuildReport(player, COUNTER_MEASURES_REPORT, movementInfo);
     }
 
-    BuildReport(player, FLY_HACK_REPORT);
+    BuildReport(player, FLY_HACK_REPORT, movementInfo);
 }
 
 void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode)
@@ -650,9 +664,9 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
                 const char* str = "|cFFFFFC00 JUMP HACK COUNTER MEASURE ALERT";
                 sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str, player->GetName().c_str(), player->GetName().c_str());
             }
-            BuildReport(player, COUNTER_MEASURES_REPORT);
+            BuildReport(player, COUNTER_MEASURES_REPORT, movementInfo);
         }
-        BuildReport(player, JUMP_HACK_REPORT);
+        BuildReport(player, JUMP_HACK_REPORT, movementInfo);
     }
     else if (no_fly_auras && no_fly_flags && no_swim_water)
     {
@@ -711,9 +725,9 @@ void AnticheatMgr::JumpHackDetection(Player* player, MovementInfo movementInfo, 
                     const char* str = "|cFFFFFC00 ADVANCE JUMP HACK COUNTER MEASURE ALERT";
                     sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str, player->GetName().c_str(), player->GetName().c_str());
                 }
-                BuildReport(player, COUNTER_MEASURES_REPORT);
+                BuildReport(player, COUNTER_MEASURES_REPORT, movementInfo);
             }
-            BuildReport(player, JUMP_HACK_REPORT);
+            BuildReport(player, JUMP_HACK_REPORT, movementInfo);
         }
     }
 }
@@ -780,7 +794,7 @@ void AnticheatMgr::TeleportPlaneHackDetection(Player* player, MovementInfo movem
             LOG_INFO("anticheat.module", "AnticheatMgr:: Teleport To Plane - Hack detected player {} ({})  - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
 
-        BuildReport(player, TELEPORT_PLANE_HACK_REPORT);
+        BuildReport(player, TELEPORT_PLANE_HACK_REPORT, movementInfo);
     }
 }
 
@@ -820,7 +834,7 @@ void AnticheatMgr::ClimbHackDetection(Player* player, MovementInfo movementInfo,
                 LOG_INFO("anticheat.module", "AnticheatMgr:: Climb-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
             }
 
-            BuildReport(player, CLIMB_HACK_REPORT);
+            BuildReport(player, CLIMB_HACK_REPORT, movementInfo);
         }
     }
 }
@@ -908,8 +922,8 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
                 LOG_INFO("anticheat.module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms - IP: {} - GPS Diff X: {} Y: {} Z: {} - Cheat Flagged At: {} - Cheat Flag At: {}", player->GetName(), player->GetGUID().ToString(), opponent->GetName(), latency, player->GetSession()->GetRemoteAddress().c_str(), xDiff, yDiff, zDiff, goXYZ);
                 LOG_INFO("anticheat.module", "AnticheatMgr:: DUEL ALERT Teleport-Hack detected player {} ({}) while dueling {} - Latency: {} ms - IP: {} - GPS Diff X: {} Y: {} Z: {} - Cheat Flagged At: {} - Cheat Flag At: {}", opponent->GetName(), opponent->GetGUID().ToString(), player->GetName(), latency2, opponent->GetSession()->GetRemoteAddress().c_str(), xDiff, yDiff, zDiff, goXYZ2);
             }
-            BuildReport(player, TELEPORT_HACK_REPORT);
-            BuildReport(opponent, TELEPORT_HACK_REPORT);
+            BuildReport(player, TELEPORT_HACK_REPORT, movementInfo);
+            BuildReport(opponent, TELEPORT_HACK_REPORT, movementInfo);
         }
         else if (player->CanTeleport())
             player->SetCanTeleport(false);
@@ -917,18 +931,6 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
 
     if ((xDiff >= 50.0f || yDiff >= 50.0f) && !player->CanTeleport() && !player->IsBeingTeleported())
     {
-        uint32 counter = m_Players[key].GetTypeReports(TELEPORT_HACK_REPORT);
-        uint32 alertFrequency = GetAlertFrequencyConfigFromReportType(TELEPORT_HACK_REPORT);
-        if (counter % alertFrequency == 0)
-        {
-            SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Possible Teleport Hack Detected!");
-
-            if (counter >= GetMinimumReportInChatThresholdConfigFromReportType(TELEPORT_HACK_REPORT) && counter <= GetMaximumReportInChatThresholdConfigFromReportType(TELEPORT_HACK_REPORT))
-            {
-                uint32 latency = player->GetSession()->GetLatency();
-                sWorld->SendGMText(LANG_ANTICHEAT_TELEPORT, player->GetName().c_str(), player->GetName().c_str(), latency, xDiff, yDiff, zDiff);
-            }
-        }
         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
         {
             uint32 latency = player->GetSession()->GetLatency();
@@ -952,9 +954,9 @@ void AnticheatMgr::TeleportHackDetection(Player* player, MovementInfo movementIn
                 sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str, player->GetName().c_str(), player->GetName().c_str());
             }
             player->TeleportTo(player->GetMapId(), lastX, lastY, lastZ, player->GetOrientation());
-            BuildReport(player, COUNTER_MEASURES_REPORT);
+            BuildReport(player, COUNTER_MEASURES_REPORT, movementInfo);
         }
-        BuildReport(player, TELEPORT_HACK_REPORT);
+        BuildReport(player, TELEPORT_HACK_REPORT, movementInfo);
     }
     else if (player->CanTeleport())
         player->SetCanTeleport(false);
@@ -990,24 +992,12 @@ void AnticheatMgr::IgnoreControlHackDetection(Player* player, MovementInfo movem
         bool unrestricted = newX != lastX || newY != lastY;
         if (unrestricted)
         {
-            uint32 counter = m_Players[key].GetTypeReports(IGNORE_CONTROL_REPORT);
-            uint32 alertFrequency = GetAlertFrequencyConfigFromReportType(IGNORE_CONTROL_REPORT);
-            if (counter % alertFrequency == 0)
-            {
-                SendMiddleScreenGMMessage("|cFF00FFFF[|cFF60FF00" + player->GetName() + "|cFF00FFFF] Possible Ignore Control Hack Detected!");
-
-                if (counter >= GetMinimumReportInChatThresholdConfigFromReportType(IGNORE_CONTROL_REPORT) && counter <= GetMaximumReportInChatThresholdConfigFromReportType(IGNORE_CONTROL_REPORT))
-                {
-                    sWorld->SendGMText(LANG_ANTICHEAT_IGNORECONTROL, player->GetName().c_str(), latency);
-                }
-            }
             if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
             {
                 std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
                 LOG_INFO("anticheat.module", "AnticheatMgr:: Ignore Control - Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
             }
-
-            BuildReport(player, IGNORE_CONTROL_REPORT);
+            BuildReport(player, IGNORE_CONTROL_REPORT, movementInfo);
         }
     }
 }
@@ -1031,7 +1021,7 @@ void AnticheatMgr::GravityHackDetection(Player* player, MovementInfo movementInf
                 std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
                 LOG_INFO("anticheat.module", "AnticheatMgr:: Gravity-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
             }
-            BuildReport(player, GRAVITY_HACK_REPORT);
+            BuildReport(player, GRAVITY_HACK_REPORT, movementInfo);
         }
     }
 }
@@ -1058,7 +1048,7 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo movemen
                 std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
                 LOG_INFO("anticheat.module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
             }
-            BuildReport(player, WALK_WATER_HACK_REPORT);
+            BuildReport(player, WALK_WATER_HACK_REPORT, movementInfo);
         }
     }
 
@@ -1089,7 +1079,7 @@ void AnticheatMgr::WalkOnWaterHackDetection(Player* player, MovementInfo movemen
         std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
         LOG_INFO("anticheat.module", "AnticheatMgr:: Walk on Water - Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
     }
-    BuildReport(player, WALK_WATER_HACK_REPORT);
+    BuildReport(player, WALK_WATER_HACK_REPORT, movementInfo);
 }
 
 void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
@@ -1143,8 +1133,6 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
     if (m_Players[key].GetLastMovementInfo().pos.GetPositionZ() == movementInfo.pos.GetPositionZ()
         && player->GetPositionZ() >= player->GetFloorZ() + 2.5f)
     {
-        BuildAndSendReportToIngameGameMasters(player, ZAXIS_HACK_REPORT);
-
         if (sConfigMgr->GetOption<bool>("Anticheat.WriteLog", true))
         {
             uint32 latency = player->GetSession()->GetLatency();
@@ -1169,9 +1157,9 @@ void AnticheatMgr::ZAxisHackDetection(Player* player, MovementInfo movementInfo)
                 const char* str = "|cFFFFFC00 IGNORE-Z HACK COUNTER MEASURE ALERT";
                 sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str, player->GetName().c_str(), player->GetName().c_str());
             }
-            BuildReport(player, COUNTER_MEASURES_REPORT);
+            BuildReport(player, COUNTER_MEASURES_REPORT, movementInfo);
         }
-        BuildReport(player, ZAXIS_HACK_REPORT);
+        BuildReport(player, ZAXIS_HACK_REPORT, movementInfo);
     }
 }
 
@@ -1209,8 +1197,7 @@ void AnticheatMgr::AntiSwimHackDetection(Player* player, MovementInfo movementIn
             std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
             LOG_INFO("anticheat.module", "AnticheatMgr:: Anti-Swim-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
-
-        BuildReport(player, ANTISWIM_HACK_REPORT);
+        BuildReport(player, ANTISWIM_HACK_REPORT, movementInfo);
     }
 }
 
@@ -1235,7 +1222,7 @@ void AnticheatMgr::AntiKnockBackHackDetection(Player* player, MovementInfo movem
             std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
             LOG_INFO("anticheat.module", "AnticheatMgr:: Anti-Knock Back - Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
         }
-        BuildReport(player, ANTIKNOCK_BACK_HACK_REPORT);
+        BuildReport(player, ANTIKNOCK_BACK_HACK_REPORT, movementInfo);
     }
     else if (player->CanKnockback())
         player->SetCanKnockback(false);
@@ -1281,13 +1268,13 @@ void AnticheatMgr::NoFallDamageDetection(Player* player, MovementInfo movementIn
                     std::string goXYZ = ".go xyz " + std::to_string(player->GetPositionX()) + " " + std::to_string(player->GetPositionY()) + " " + std::to_string(player->GetPositionZ() + 1.0f) + " " + std::to_string(player->GetMap()->GetId()) + " " + std::to_string(player->GetOrientation());
                     LOG_INFO("anticheat.module", "AnticheatMgr:: No Fall Damage - Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                 }
-                BuildReport(player, NO_FALL_DAMAGE_HACK_REPORT);
+                BuildReport(player, NO_FALL_DAMAGE_HACK_REPORT, movementInfo);
             }
         }
     }
 }
 
-void AnticheatMgr::BGreport(Player* player)
+void AnticheatMgr::BGreport(Player* player, MovementInfo movementInfo)
 {
     ObjectGuid key = player->GetGUID();
     uint32 counter = m_Players[key].GetTypeReports(TELEPORT_HACK_REPORT);
@@ -1311,7 +1298,7 @@ void AnticheatMgr::BGreport(Player* player)
         LOG_INFO("anticheat.module", "AnticheatMgr:: BG Start Spot Exploit-Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
     }
 
-    BuildReport(player, TELEPORT_HACK_REPORT);
+    BuildReport(player, TELEPORT_HACK_REPORT, movementInfo);    // Synful-Syn: This needs a different report type.
 }
 
 Position const* AnticheatMgr::GetTeamStartPosition(TeamId teamId) const
@@ -1319,7 +1306,7 @@ Position const* AnticheatMgr::GetTeamStartPosition(TeamId teamId) const
     return &_startPosition[teamId];
 }
 
-void AnticheatMgr::CheckStartPositions(Player* player)
+void AnticheatMgr::CheckStartPositions(Player* player, MovementInfo movementInfo)
 {
     if (sConfigMgr->GetOption<bool>("Anticheat.BG.StartAreaTeleport", true))
     {
@@ -1342,7 +1329,7 @@ void AnticheatMgr::CheckStartPositions(Player* player)
                 const char* str = "|cFFFFFC00 BG START SPOT COUNTER MEASURE ALERT";
                 sWorld->SendGMText(LANG_ANTICHEAT_COUNTERMEASURE, str, player->GetName().c_str(), player->GetName().c_str());
             }
-            BuildReport(player, COUNTER_MEASURES_REPORT);
+            BuildReport(player, COUNTER_MEASURES_REPORT, movementInfo);
             player->TeleportTo(player->GetMapId(), startPos->GetPositionX(), startPos->GetPositionY(), startPos->GetPositionZ(), startPos->GetOrientation());
         }
     }
@@ -1368,15 +1355,15 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         (player->GetTeamId() == TEAM_ALLIANCE && movementInfo.pos.GetPositionX() > 940.31f) ||
                         (player->GetTeamId() == TEAM_ALLIANCE && movementInfo.pos.GetPositionY() < -525.0f))
                     {
-                        sAnticheatMgr->BGreport(player);
-                        sAnticheatMgr->CheckStartPositions(player);
+                        sAnticheatMgr->BGreport(player, movementInfo);
+                        sAnticheatMgr->CheckStartPositions(player, movementInfo);
                     }
                     if ((player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionY() > -535.0f) ||
                         (player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionX() > -1283.33f) ||
                         (player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionY() < -716.0f))
                     {
-                        sAnticheatMgr->BGreport(player);
-                        sAnticheatMgr->CheckStartPositions(player);
+                        sAnticheatMgr->BGreport(player, movementInfo);
+                        sAnticheatMgr->CheckStartPositions(player, movementInfo);
                     }
                 }
             }
@@ -1387,8 +1374,8 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
             // Only way to get this high is with engineering items malfunction.
             if (!(movementInfo.HasMovementFlag(MOVEMENTFLAG_FALLING_FAR) || m_Players[key].GetLastOpcode() == MSG_MOVE_JUMP) && movementInfo.pos.GetPositionZ() > 380.0f)
             {
-                sAnticheatMgr->BGreport(player);
-                sAnticheatMgr->CheckStartPositions(player);
+                sAnticheatMgr->BGreport(player, movementInfo);
+                sAnticheatMgr->CheckStartPositions(player, movementInfo);
             }
             if (Battleground* bg = player->GetBattleground())
             {
@@ -1399,15 +1386,15 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         (player->GetTeamId() == TEAM_ALLIANCE && movementInfo.pos.GetPositionY() > 1500.0f) ||
                         (player->GetTeamId() == TEAM_ALLIANCE && movementInfo.pos.GetPositionY() < 1450.0f))
                     {
-                        sAnticheatMgr->BGreport(player);
-                        sAnticheatMgr->CheckStartPositions(player);
+                        sAnticheatMgr->BGreport(player, movementInfo);
+                        sAnticheatMgr->CheckStartPositions(player, movementInfo);
                     }
                     if ((player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionX() > 957.0f) ||
                         (player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionY() < 1416.0f) ||
                         (player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionY() > 1466.0f))
                     {
-                        sAnticheatMgr->BGreport(player);
-                        sAnticheatMgr->CheckStartPositions(player);
+                        sAnticheatMgr->BGreport(player, movementInfo);
+                        sAnticheatMgr->CheckStartPositions(player, movementInfo);
                     }
                 }
             }
@@ -1424,14 +1411,14 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         (player->GetTeamId() == TEAM_ALLIANCE && movementInfo.pos.GetPositionY() < 1258.0f) ||
                         (player->GetTeamId() == TEAM_ALLIANCE && movementInfo.pos.GetPositionY() > 1361.0f))
                     {
-                        sAnticheatMgr->BGreport(player);
-                        sAnticheatMgr->CheckStartPositions(player);
+                        sAnticheatMgr->BGreport(player, movementInfo);
+                        sAnticheatMgr->CheckStartPositions(player, movementInfo);
                     }
                     if ((player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionX() > 730.0f) ||
                         (player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionY() > 724.8f))
                     {
-                        sAnticheatMgr->BGreport(player);
-                        sAnticheatMgr->CheckStartPositions(player);
+                        sAnticheatMgr->BGreport(player, movementInfo);
+                        sAnticheatMgr->CheckStartPositions(player, movementInfo);
                     }
                 }
             }
@@ -1448,15 +1435,15 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         (player->GetTeamId() == TEAM_ALLIANCE && movementInfo.pos.GetPositionY() > 1610.0f) ||
                         (player->GetTeamId() == TEAM_ALLIANCE && movementInfo.pos.GetPositionY() < 1584.0f))
                     {
-                        sAnticheatMgr->BGreport(player);
-                        sAnticheatMgr->CheckStartPositions(player);
+                        sAnticheatMgr->BGreport(player, movementInfo);
+                        sAnticheatMgr->CheckStartPositions(player, movementInfo);
                     }
                     if ((player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionX() > 1816.0f) ||
                         (player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionY() > 1554.0f) ||
                         (player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionY() < 1526.0f))
                     {
-                        sAnticheatMgr->BGreport(player);
-                        sAnticheatMgr->CheckStartPositions(player);
+                        sAnticheatMgr->BGreport(player, movementInfo);
+                        sAnticheatMgr->CheckStartPositions(player, movementInfo);
                     }
                 }
             }
@@ -1473,15 +1460,15 @@ void AnticheatMgr::BGStartExploit(Player* player, MovementInfo movementInfo)
                         (player->GetTeamId() == TEAM_ALLIANCE && movementInfo.pos.GetPositionY() < -911.0f) ||
                         (player->GetTeamId() == TEAM_ALLIANCE && movementInfo.pos.GetPositionY() > -760.0f))
                     {
-                        sAnticheatMgr->BGreport(player);
-                        sAnticheatMgr->CheckStartPositions(player);
+                        sAnticheatMgr->BGreport(player, movementInfo);
+                        sAnticheatMgr->CheckStartPositions(player, movementInfo);
                     }
                     if ((player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionX() < 1147.8f) ||
                         (player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionY() < -855.0f) ||
                         (player->GetTeamId() == TEAM_HORDE && movementInfo.pos.GetPositionY() > -676.0f))
                     {
-                        sAnticheatMgr->BGreport(player);
-                        sAnticheatMgr->CheckStartPositions(player);
+                        sAnticheatMgr->BGreport(player, movementInfo);
+                        sAnticheatMgr->CheckStartPositions(player, movementInfo);
                     }
                 }
             }
@@ -1540,7 +1527,7 @@ void AnticheatMgr::DoActions(Player* player)
                 LOG_INFO("anticheat.module", "Opcode Manipulation Hack detected player {} ({}) - Latency: {} ms - IP: {} - Cheat Flagged At: {}", player->GetName(), player->GetGUID().ToString(), latency, player->GetSession()->GetRemoteAddress().c_str(), goXYZ);
                 order.counter = 0;
             }
-            BuildReport(player, OP_ACK_HACK_REPORT);
+            BuildReport(player, OP_ACK_HACK_REPORT, std::nullopt);
         }
     }
 }
@@ -1611,7 +1598,7 @@ bool AnticheatMgr::MustCheckTempReports(ReportTypes type)
         && type != COUNTER_MEASURES_REPORT;
 }
 
-void AnticheatMgr::BuildReport(Player* player, ReportTypes reportType)
+void AnticheatMgr::BuildReport(Player* player, ReportTypes reportType, Optional<MovementInfo> optMovementInfo)
 {
     OnReport(player, reportType);
     ObjectGuid key = player->GetGUID();
@@ -1668,7 +1655,7 @@ void AnticheatMgr::BuildReport(Player* player, ReportTypes reportType)
         }
     }
 
-    BuildAndSendReportToIngameGameMasters(player, reportType);
+    BuildAndSendReportToIngameGameMasters(player, reportType, optMovementInfo);
 
     if (sConfigMgr->GetOption<bool>("Anticheat.KickPlayer", true) && m_Players[key].GetTotalReports() > sConfigMgr->GetOption<uint32>("Anticheat.ReportsForKick", 70))
     {

@@ -126,17 +126,17 @@ class AnticheatMgr
         void AntiSwimHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
         void AntiKnockBackHackDetection(Player* player, MovementInfo movementInfo);
         void NoFallDamageDetection(Player* player, MovementInfo movementInfo);
-        void BGreport(Player* player);
-        void CheckStartPositions(Player* player);
+        void BGreport(Player* player, MovementInfo movementInfo);
+        void CheckStartPositions(Player* player, MovementInfo movementInfo);
         void BGStartExploit(Player* player, MovementInfo movementInfo);
-        void BuildReport(Player* player, ReportTypes reportType);
+        void BuildReport(Player* player, ReportTypes reportType, Optional<MovementInfo> optMovementInfo);
         bool MustCheckTempReports(ReportTypes type);
         void SendMiddleScreenGMMessage(std::string str);
 
         [[nodiscard]] uint32 GetAlertFrequencyConfigFromReportType(ReportTypes reportType);
         [[nodiscard]] uint32 GetMinimumReportInChatThresholdConfigFromReportType(ReportTypes reportType);
         [[nodiscard]] uint32 GetMaximumReportInChatThresholdConfigFromReportType(ReportTypes reportType);
-        void BuildAndSendReportToIngameGameMasters(Player* player, ReportTypes reportType);
+        void BuildAndSendReportToIngameGameMasters(Player* player, ReportTypes reportType, Optional<MovementInfo> optMovementInfo);
 
         [[nodiscard]] uint32 GetTeleportSkillCooldownDurationInMS(Player* player) const;
         [[nodiscard]] float GetTeleportSkillDistanceInYards(Player* player) const;
