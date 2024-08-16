@@ -88,6 +88,8 @@ class AnticheatMgr
 
         EventEmitter<void(Player*, uint16)> OnReport;
 
+        void DoToAllGMs(std::function<void(Player*)> exec);
+
         void StartHackDetection(Player* player, MovementInfo movementInfo, uint32 opcode);
         void SavePlayerData(Player* player);
         void SavePlayerDataDaily(Player* player);
