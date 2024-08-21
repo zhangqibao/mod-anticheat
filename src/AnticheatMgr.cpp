@@ -32,7 +32,7 @@
 #include "SpellAuras.h"
 #include "DatabaseEnv.h"
 
-constexpr std::string modulestring = "anticheat";
+std::string modulestring = "anticheat";
 constexpr auto LANG_ANTICHEAT_ALERT = 1;
 constexpr auto LANG_ANTICHEAT_TELEPORT = 2;
 constexpr auto LANG_ANTICHEAT_IGNORECONTROL = 3;
