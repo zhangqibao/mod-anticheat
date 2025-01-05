@@ -39,12 +39,12 @@ class AnticheatPlayerScript : public PlayerScript
 public:
     AnticheatPlayerScript() : PlayerScript("AnticheatPlayerScript") { }
 
-    void OnLogout(Player* player) override
+    void OnPlayerLogout(Player* player) override
     {
         sAnticheatMgr->HandlePlayerLogout(player);
     }
 
-    void OnLogin(Player* player) override
+    void OnPlayerLogin(Player* player) override
     {
         sAnticheatMgr->HandlePlayerLogin(player);
 
@@ -52,7 +52,7 @@ public:
             ChatHandler(player->GetSession()).PSendSysMessage("This server is running an Anticheat Module.");
     }
 
-    void OnUpdate(Player* player, uint32 diff) override
+    void OnPlayerUpdate(Player* player, uint32 diff) override
     {
         if (sConfigMgr->GetOption<bool>("Anticheat.OpAckOrderHack", true) && sConfigMgr->GetOption<bool>("Anticheat.Enabled", true))
             sAnticheatMgr->AckUpdate(player, diff);
