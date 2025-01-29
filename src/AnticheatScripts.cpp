@@ -54,6 +54,10 @@ public:
 
     void OnUpdate(Player* player, uint32 diff) override
     {
+        //过滤掉机器人
+        if (player->GetSession()->IsBot() || player->IsNPCBotOrPet())
+            return;
+
         if (sConfigMgr->GetOption<bool>("Anticheat.OpAckOrderHack", true) && sConfigMgr->GetOption<bool>("Anticheat.Enabled", true))
             sAnticheatMgr->AckUpdate(player, diff);
     }
@@ -104,6 +108,10 @@ public:
 
     void OnPlayerMove(Player* player, MovementInfo mi, uint32 opcode) override
     {
+        //过滤掉机器人
+        if (player->GetSession()->IsBot() || player->IsNPCBotOrPet())
+            return;
+
         if (!player->GetSession()->IsGMAccount() || sConfigMgr->GetOption<bool>("Anticheat.EnabledOnGmAccounts", false))
             sAnticheatMgr->StartHackDetection(player, mi, opcode);
     }

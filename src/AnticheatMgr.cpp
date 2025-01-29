@@ -108,6 +108,11 @@ void AnticheatMgr::StartHackDetection(Player* player, MovementInfo movementInfo,
     if (player->IsGameMaster())
         return;
 
+    //过滤掉机器人
+    if (player->GetSession()->IsBot() || player->IsNPCBotOrPet())
+        return;
+
+
     ObjectGuid key = player->GetGUID();
 
     if (player->IsInFlight() || player->GetTransport() || player->GetVehicle())
