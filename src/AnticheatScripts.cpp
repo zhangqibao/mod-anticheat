@@ -30,6 +30,7 @@
 #include "Player.h"
 #include "Timer.h"
 #include "GameTime.h"
+#include "WorldSessionMgr.h"
 
 Seconds resetTime = 0s;
 Seconds lastIterationPlayer = GameTime::GetUptime() + 30s; //TODO: change 30 secs static to a configurable option
@@ -78,9 +79,10 @@ public:
         {
             lastIterationPlayer = GameTime::GetUptime() + Seconds(sConfigMgr->GetOption<uint32>("Anticheat.SaveReportsTime", 60));
 
-            LOG_INFO("module", "Saving reports for {} players.", sWorld->GetPlayerCount());
+            LOG_INFO("module", "Saving reports for {} players.", sWorldSessionMgr->GetPlayerCount());
 
-            for (SessionMap::const_iterator itr = sWorld->GetAllSessions().begin(); itr != sWorld->GetAllSessions().end(); ++itr)
+            WorldSessionMgr::SessionMap const& sessionMap = sWorldSessionMgr->GetAllSessions();
+            for (WorldSessionMgr::SessionMap::const_iterator itr = sessionMap.begin(); itr != sessionMap.end(); ++itr)
                 if (Player* plr = itr->second->GetPlayer())
                     sAnticheatMgr->SavePlayerData(plr);
         }
