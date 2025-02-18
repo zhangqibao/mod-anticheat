@@ -38,7 +38,7 @@ Seconds lastIterationPlayer = GameTime::GetUptime() + 30s; //TODO: change 30 sec
 class AnticheatPlayerScript : public PlayerScript
 {
 public:
-    AnticheatPlayerScript() : PlayerScript("AnticheatPlayerScript") { }
+    AnticheatPlayerScript() : PlayerScript("AnticheatPlayerScript", { PLAYERHOOK_ON_LOGOUT, PLAYERHOOK_ON_LOGIN, PLAYERHOOK_ON_UPDATE }) { }
 
     void OnPlayerLogout(Player* player) override
     {
@@ -63,7 +63,7 @@ public:
 class AnticheatWorldScript : public WorldScript
 {
 public:
-    AnticheatWorldScript() : WorldScript("AnticheatWorldScript") { }
+    AnticheatWorldScript() : WorldScript("AnticheatWorldScript", { WORLDHOOK_ON_UPDATE, WORLDHOOK_ON_AFTER_CONFIG_LOAD }) { }
 
     void OnUpdate(uint32 /* diff */) override // unusued parameter
     {
@@ -102,7 +102,7 @@ public:
 class AnticheatMovementHandlerScript : public MovementHandlerScript
 {
 public:
-    AnticheatMovementHandlerScript() : MovementHandlerScript("AnticheatMovementHandlerScript") { }
+    AnticheatMovementHandlerScript() : MovementHandlerScript("AnticheatMovementHandlerScript", { MOVEMENTHOOK_ON_PLAYER_MOVE }) { }
 
     void OnPlayerMove(Player* player, MovementInfo mi, uint32 opcode) override
     {
