@@ -31,6 +31,9 @@
 #include "Configuration/Config.h"
 #include "SpellAuras.h"
 #include "DatabaseEnv.h"
+#include "WorldSession.h"
+#include "WorldSessionMgr.h"
+
 
 std::string modulestring = "anticheat";
 constexpr auto LANG_ANTICHEAT_ALERT = 1;
@@ -93,8 +96,8 @@ AnticheatMgr::~AnticheatMgr()
 
 void AnticheatMgr::DoToAllGMs(std::function<void(Player*)> exec)
 {
-    SessionMap::const_iterator itr;
-    for (itr = sWorld->GetAllSessions().begin(); itr != sWorld->GetAllSessions().end(); ++itr)
+    WorldSessionMgr::SessionMap::const_iterator itr;
+    for (itr = sWorldSessionMgr->GetAllSessions().begin(); itr != sWorldSessionMgr->GetAllSessions().end(); ++itr)
         if (Player* player = itr->second->GetPlayer())
             if (!AccountMgr::IsPlayerAccount(player->GetSession()->GetSecurity()) && player->IsInWorld())
                 exec(player);
@@ -157,7 +160,7 @@ void AnticheatMgr::SendMiddleScreenGMMessage(std::string str)
 {
     WorldPacket data(SMSG_NOTIFICATION, str.size() + 1);
     data << str;
-    sWorld->SendGlobalGMMessage(&data);
+    sWorldSessionMgr->SendGlobalGMMessage(&data);
 }
 
 const char* AnticheatMgr::GetReportNameFromReportType(ReportTypes reportType)
@@ -1735,7 +1738,7 @@ void AnticheatMgr::BuildReport(Player* player, ReportTypes reportType, Optional<
             stream << "|CFF" << plr_colour << "[AntiCheat]|r|CFF" << tag_colour <<
                 " Player |r|cff" << plr_colour << plr << "|r|cff" << tag_colour <<
                 " has been kicked by the Anticheat Module.|r";
-            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+            sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
         }
     }
 
@@ -1761,7 +1764,7 @@ void AnticheatMgr::BuildReport(Player* player, ReportTypes reportType, Optional<
             stream << "|CFF" << plr_colour << "[AntiCheat]|r|CFF" << tag_colour <<
                 " Player |r|cff" << plr_colour << plr << "|r|cff" << tag_colour <<
                 " has been Banned by the Anticheat Module.|r";
-            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+            sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
         }
     }
 
@@ -1806,7 +1809,7 @@ void AnticheatMgr::BuildReport(Player* player, ReportTypes reportType, Optional<
             stream << "|CFF" << plr_colour << "[AntiCheat]|r|CFF" << tag_colour <<
                 " Player |r|cff" << plr_colour << plr << "|r|cff" << tag_colour <<
                 " has been Jailed by the Anticheat Module.|r";
-            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+            sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
         }
     }
 }
@@ -1814,7 +1817,7 @@ void AnticheatMgr::BuildReport(Player* player, ReportTypes reportType, Optional<
 void AnticheatMgr::AnticheatGlobalCommand(ChatHandler* handler)
 {
     // save All Anticheat Player Data before displaying global stats
-    for (SessionMap::const_iterator itr = sWorld->GetAllSessions().begin(); itr != sWorld->GetAllSessions().end(); ++itr)
+    for (WorldSessionMgr::SessionMap::const_iterator itr = sWorldSessionMgr->GetAllSessions().begin(); itr != sWorldSessionMgr->GetAllSessions().end(); ++itr)
     {
         if (Player* plr = itr->second->GetPlayer())
         {
